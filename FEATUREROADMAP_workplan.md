@@ -146,7 +146,7 @@ syncing.
 - **Definition of Done:** Entering a name and clicking "Create Room" generates a room code and navigates to a lobby URL containing that code (e.g. `/room/ABCD`); typing an existing code and clicking "Join Room" navigates to the same lobby URL.
 
 ### 2.2 — Durable Object skeleton & Cloudflare config
-- [ ] **Dependencies:** 1.11
+- [x] **Dependencies:** 1.11
 - **Files:** `src/room.js` (new — the Durable Object class), `src/index.js`, `wrangler.jsonc`
 - **What it does:** Creates the `Room` Durable Object class (currently empty of game logic) and registers it in `wrangler.jsonc`, including the required `"new_sqlite_classes"` entry in the `migrations` array (this tells Cloudflare "this Durable Object type stores its data in the newer SQLite-backed storage," which is what the Alarms-based tick loop in Phase 3 needs).
 - **Definition of Done:** The Worker deploys with no configuration errors and a Durable Object can be reached (even with a placeholder response) via `env.ROOM.getByName(roomCode)`.
