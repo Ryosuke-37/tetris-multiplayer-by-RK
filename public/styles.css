@@ -284,3 +284,23 @@ body {
 .opponent-status-badge[hidden] {
   display: none;
 }
+
+.results-list {
+  list-style: decimal inside;
+  margin: 0 0 16px;
+  padding: 0;
+  text-align: left;
+  min-width: 200px;
+}
+
+.results-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid #374151;
+}
+
+.results-list li:last-child {
+  border-bottom: none;
+}

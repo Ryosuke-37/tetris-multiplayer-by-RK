@@ -169,7 +169,10 @@ export class Room {
         return;
     }
 
-    this.broadcastState();
+    await this.checkForGameEnd();
+    if (this.gameState === 'playing') {
+      this.broadcastState();
+    }
     await this.persistState();
   }
 
@@ -221,7 +224,10 @@ export class Room {
     const player = attachment && attachment.playerId ? this.players.get(attachment.playerId) : null;
     if (player && player.status === 'playing') {
       player.status = 'disconnected';
-      this.broadcastState();
+      await this.checkForGameEnd();
+      if (this.gameState === 'playing') {
+        this.broadcastState();
+      }
       await this.persistState();
     }
     ws.close(code, reason);
@@ -302,11 +308,8 @@ export class Room {
   // Durable Object can fully sleep between ticks instead of being kept
   // artificially alive.
   async alarm() {
-    let anyPlaying = false;
-
     for (const player of this.players.values()) {
       if (player.status !== 'playing') continue;
-      anyPlaying = true;
 
       player.msUntilDrop -= BASE_TICK_MS;
       if (player.msUntilDrop > 0) continue;
@@ -315,11 +318,46 @@ export class Room {
       this.dropPlayerPiece(player);
     }
 
-    this.broadcastState();
-    await this.persistState();
+    await this.checkForGameEnd();
 
-    if (anyPlaying) {
+    // checkForGameEnd() moves gameState to 'results' once the round is
+    // over; while still 'playing' there must be more than one active
+    // player left (otherwise it would have already ended it), so it's
+    // always correct to keep ticking in that case.
+    if (this.gameState === 'playing') {
+      this.broadcastState();
+      await this.persistState();
       await this.scheduleAlarm();
+    } else {
+      await this.persistState();
+    }
+  }
+
+  // Ends the round once at most one player is still actively playing
+  // (everyone else has topped out or disconnected) - "the last remaining
+  // player wins," or if literally everyone has topped out, nobody does.
+  async checkForGameEnd() {
+    if (this.gameState !== 'playing') return;
+
+    const activePlayers = [...this.players.values()].filter((p) => p.status === 'playing');
+    const threshold = this.players.size >= 2 ? 1 : 0;
+    if (activePlayers.length > threshold) return;
+
+    this.gameState = 'results';
+    await this.ctx.storage.deleteAlarm();
+
+    const rankings = [...this.players.values()]
+      .map((p) => ({ name: p.name, score: p.score }))
+      .sort((a, b) => b.score - a.score);
+
+    const message = JSON.stringify({ type: 'results', payload: { rankings } });
+    for (const player of this.players.values()) {
+      if (!player.socket) continue;
+      try {
+        player.socket.send(message);
+      } catch (err) {
+        // Ignore - nothing to notify, this player is already gone.
+      }
     }
   }
 

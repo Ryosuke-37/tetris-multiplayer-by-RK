@@ -229,7 +229,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** Closing one browser tab mid-game makes that player's thumbnail show "Disconnected" in the remaining tab(s) within a few seconds, while the other player(s) keep playing uninterrupted.
 
 ### 3.8 — End-of-game detection & results screen
-- [ ] **Dependencies:** 3.7
+- [x] **Dependencies:** 3.7
 - **Files:** `src/room.js`, `public/room.js`, `public/styles.css`
 - **What it does:** Detects when all connected players have topped out (or only one remains active), stops ticking, and broadcasts final results; the client shows the results screen from `ProductSpec.md` §4.3 (scores ranked highest to lowest).
 - **Definition of Done:** Playing a full multiplayer round to completion shows a correctly-ranked results screen, identically, on every connected player's browser.

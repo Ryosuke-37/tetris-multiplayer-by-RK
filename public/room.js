@@ -188,6 +188,45 @@
     }
   }
 
+  let resultsOverlay = null;
+
+  function buildResultsOverlay() {
+    const overlay = document.createElement('div');
+    overlay.id = 'results-overlay';
+    overlay.className = 'overlay';
+    overlay.hidden = true;
+    overlay.innerHTML = `
+      <div class="overlay-content">
+        <h2>Results</h2>
+        <ol id="results-list" class="results-list"></ol>
+        <button id="play-again-btn" class="primary-btn">Play Again</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#play-again-btn').addEventListener('click', () => {
+      socket.send(JSON.stringify({ type: 'playAgain' }));
+    });
+    return overlay;
+  }
+
+  function showResults(rankings) {
+    if (!resultsOverlay) resultsOverlay = buildResultsOverlay();
+    const list = resultsOverlay.querySelector('#results-list');
+    list.innerHTML = '';
+    rankings.forEach((entry) => {
+      const li = document.createElement('li');
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = entry.name; // textContent, not innerHTML - display names are untrusted user input
+      const scoreSpan = document.createElement('span');
+      scoreSpan.textContent = entry.score;
+      li.appendChild(nameSpan);
+      li.appendChild(scoreSpan);
+      list.appendChild(li);
+    });
+    resultsOverlay.hidden = false;
+    gameStarted = false;
+  }
+
   let gameStarted = false;
   const INPUT_ACTIONS = {
     ArrowLeft: 'moveLeft',
@@ -246,6 +285,11 @@
       if (!gameStarted) return;
       renderYou(data.payload.you);
       renderOpponents(data.payload.opponents);
+    }
+
+    if (data.type === 'results') {
+      window.__results = data.payload.rankings; // kept for test/debug inspection
+      showResults(data.payload.rankings);
     }
   });
 })();
