@@ -291,5 +291,16 @@
       window.__results = data.payload.rankings; // kept for test/debug inspection
       showResults(data.payload.rankings);
     }
+
+    if (data.type === 'lobby') {
+      window.__results = undefined;
+      if (resultsOverlay) resultsOverlay.hidden = true;
+      if (gameScreen) gameScreen.hidden = true;
+      lobbyScreen.hidden = false;
+      gameStarted = false;
+      window.__gameStarted = false;
+      // The server follows this with a fresh "players" broadcast, which
+      // renderPlayers() already handles - no need to duplicate that here.
+    }
   });
 })();

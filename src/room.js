@@ -139,6 +139,35 @@ export class Room {
       await this.handleInput(ws, data.payload.action);
       return;
     }
+
+    if (data.type === 'playAgain') {
+      await this.resetToLobby();
+      return;
+    }
+  }
+
+  // Any connected player can trigger a rematch, same as Start Game - no
+  // special "host" role exists in this project (see ProductSpec's scope).
+  async resetToLobby() {
+    if (this.gameState !== 'results') return;
+
+    this.gameState = 'lobby';
+    this.players = new Map();
+    await this.persistState(); // gameState is 'lobby', so this clears stored round state
+
+    const message = JSON.stringify({ type: 'lobby' });
+    for (const socket of this.ctx.getWebSockets()) {
+      try {
+        socket.send(message);
+      } catch (err) {
+        // Ignore - socket already gone.
+      }
+    }
+
+    // Re-broadcast the roster from each still-connected socket's name
+    // attachment (untouched by the round that just ended), so the lobby
+    // shows exactly who's still here.
+    this.broadcastPlayers();
   }
 
   async handleInput(ws, action) {

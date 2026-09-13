@@ -235,7 +235,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** Playing a full multiplayer round to completion shows a correctly-ranked results screen, identically, on every connected player's browser.
 
 ### 3.9 — Play Again / rematch
-- [ ] **Dependencies:** 3.8
+- [x] **Dependencies:** 3.8
 - **Files:** `src/room.js`, `public/room.js`
 - **What it does:** A "Play Again" button on the results screen resets the room's game state (same room code, same connected players) and returns everyone to the lobby (2.6) for a fresh round.
 - **Definition of Done:** Clicking "Play Again" in one tab returns all connected tabs to a fresh lobby for the same room code, ready to start a new round.
