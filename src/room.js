@@ -3,7 +3,21 @@ import {
   randomShapeName,
   spawnPiece,
   mergeBoardWithPiece,
+  collides,
+  lockPieceIntoBoard,
+  clearLines,
+  scoreForLines,
+  levelForLines,
+  dropIntervalForLevel,
 } from './tetris-engine.js';
+
+// The Alarms API only lets a Durable Object have one pending alarm at a
+// time, but each player has their own independent fall speed (faster at
+// higher levels). Rather than one alarm per player, the room wakes up on
+// this fixed, fast cadence and only actually drops a given player's piece
+// once their own per-player countdown (msUntilDrop) reaches zero - so
+// everyone still falls at their own correct speed off a single alarm.
+const BASE_TICK_MS = 100;
 
 export class Room {
   constructor(ctx, env) {
@@ -145,6 +159,69 @@ export class Room {
     }
 
     this.broadcastState();
+    this.scheduleAlarm();
+  }
+
+  async scheduleAlarm() {
+    await this.ctx.storage.setAlarm(Date.now() + BASE_TICK_MS);
+  }
+
+  // Runs once per BASE_TICK_MS while the room has any active player -
+  // scheduled by scheduleAlarm() rather than setInterval/setTimeout, so the
+  // Durable Object can fully sleep between ticks instead of being kept
+  // artificially alive.
+  async alarm() {
+    let anyPlaying = false;
+
+    for (const player of this.players.values()) {
+      if (player.status !== 'playing') continue;
+      anyPlaying = true;
+
+      player.msUntilDrop -= BASE_TICK_MS;
+      if (player.msUntilDrop > 0) continue;
+
+      player.msUntilDrop = player.dropIntervalMs;
+      this.dropPlayerPiece(player);
+    }
+
+    this.broadcastState();
+
+    if (anyPlaying) {
+      await this.scheduleAlarm();
+    }
+  }
+
+  // Moves a player's current piece down one row if possible, or locks it,
+  // clears any completed lines, updates score/level/speed, and spawns the
+  // next piece - ending that player's game if the new piece has nowhere to
+  // spawn.
+  dropPlayerPiece(player) {
+    if (!collides(player.board, player.current.cells, player.current.row + 1, player.current.col)) {
+      player.current.row += 1;
+      return;
+    }
+
+    lockPieceIntoBoard(player.board, player.current);
+
+    const cleared = clearLines(player.board);
+    if (cleared > 0) {
+      player.score += scoreForLines(cleared, player.level);
+      player.linesCleared += cleared;
+      const newLevel = levelForLines(player.linesCleared);
+      if (newLevel !== player.level) {
+        player.level = newLevel;
+        player.dropIntervalMs = dropIntervalForLevel(player.level);
+      }
+    }
+
+    const nextPiece = spawnPiece(player.nextName);
+    player.nextName = randomShapeName();
+    player.current = nextPiece;
+    player.msUntilDrop = player.dropIntervalMs;
+
+    if (collides(player.board, player.current.cells, player.current.row, player.current.col)) {
+      player.status = 'topped-out';
+    }
   }
 
   // Sends each player their own full board (with their current piece

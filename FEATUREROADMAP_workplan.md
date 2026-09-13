@@ -193,7 +193,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** Starting a game creates a correctly-initialized board and first piece for every connected player, tracked inside the Durable Object.
 
 ### 3.2 — Alarm-driven tick loop (replaces client-side timer)
-- [ ] **Dependencies:** 3.1
+- [x] **Dependencies:** 3.1
 - **Files:** `src/room.js`
 - **What it does:** Implements the falling-piece tick using Cloudflare's Alarms API: after each tick (moving every active player's piece down one row, handling any that lock/clear lines), the Durable Object schedules its *own next* wake-up alarm rather than using `setInterval`/`setTimeout`. The alarm is cancelled once the last player leaves the room (see 3.10).
 - **Definition of Done:** With no player input at all, connected players' pieces still fall automatically at the correct, steady rate, driven entirely by alarms (verified by confirming no `setInterval`/`setTimeout` exists in `src/room.js`).
