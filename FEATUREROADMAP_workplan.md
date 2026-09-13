@@ -199,7 +199,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** With no player input at all, connected players' pieces still fall automatically at the correct, steady rate, driven entirely by alarms (verified by confirming no `setInterval`/`setTimeout` exists in `src/room.js`).
 
 ### 3.3 — Player input over WebSocket
-- [ ] **Dependencies:** 3.2
+- [x] **Dependencies:** 3.2
 - **Files:** `public/room.js`, `src/room.js`
 - **What it does:** Player key presses (move/rotate/drop) are sent to the server as JSON messages (`{"type": "input", "payload": {"action": "moveLeft"}}` and similar), and the Durable Object validates and applies them to that specific player's board — the browser no longer decides the outcome on its own, only requests it.
 - **Definition of Done:** Pressing a key in one browser tab visibly moves that player's own piece, with the server rejecting any move that would be invalid (e.g. moving into a wall).

@@ -42,6 +42,23 @@
     socket.send(JSON.stringify({ type: 'start' }));
   });
 
+  let gameStarted = false;
+  const INPUT_ACTIONS = {
+    ArrowLeft: 'moveLeft',
+    ArrowRight: 'moveRight',
+    ArrowDown: 'softDrop',
+    ArrowUp: 'rotate',
+    ' ': 'hardDrop',
+  };
+
+  document.addEventListener('keydown', (event) => {
+    if (!gameStarted) return;
+    const action = INPUT_ACTIONS[event.key];
+    if (!action) return;
+    event.preventDefault();
+    socket.send(JSON.stringify({ type: 'input', payload: { action } }));
+  });
+
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const socket = new WebSocket(`${protocol}//${window.location.host}/room/${roomCode}`);
 
@@ -73,6 +90,7 @@
 
     if (data.type === 'start') {
       console.log('Game started');
+      gameStarted = true;
       window.__gameStarted = true;
       // Task 3.4/3.5 build the real game screen and opponent thumbnails;
       // for now the lobby just stops updating.

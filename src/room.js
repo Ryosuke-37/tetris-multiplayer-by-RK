@@ -4,6 +4,7 @@ import {
   spawnPiece,
   mergeBoardWithPiece,
   collides,
+  rotateMatrix,
   lockPieceIntoBoard,
   clearLines,
   scoreForLines,
@@ -86,6 +87,69 @@ export class Room {
       this.startGame();
       return;
     }
+
+    if (data.type === 'input' && data.payload && typeof data.payload.action === 'string') {
+      this.handleInput(ws, data.payload.action);
+      return;
+    }
+  }
+
+  handleInput(ws, action) {
+    const attachment = ws.deserializeAttachment();
+    const player = attachment && attachment.playerId ? this.players.get(attachment.playerId) : null;
+    // The server, not the browser, decides whether a move is legal - a
+    // disconnected/topped-out player's stale socket can't act, and an
+    // unrecognized action is simply ignored rather than trusted blindly.
+    if (!player || player.status !== 'playing') return;
+
+    switch (action) {
+      case 'moveLeft':
+        this.movePiece(player, 0, -1);
+        break;
+      case 'moveRight':
+        this.movePiece(player, 0, 1);
+        break;
+      case 'softDrop':
+        this.movePiece(player, 1, 0);
+        break;
+      case 'rotate':
+        this.rotatePiece(player);
+        break;
+      case 'hardDrop':
+        this.hardDropPiece(player);
+        break;
+      default:
+        return;
+    }
+
+    this.broadcastState();
+  }
+
+  movePiece(player, dRow, dCol) {
+    const newRow = player.current.row + dRow;
+    const newCol = player.current.col + dCol;
+    if (collides(player.board, player.current.cells, newRow, newCol)) return false;
+    player.current.row = newRow;
+    player.current.col = newCol;
+    return true;
+  }
+
+  rotatePiece(player) {
+    if (player.current.name === 'O') return;
+    const rotated = rotateMatrix(player.current.cells);
+    if (!collides(player.board, rotated, player.current.row, player.current.col)) {
+      player.current.cells = rotated;
+    }
+  }
+
+  hardDropPiece(player) {
+    while (this.movePiece(player, 1, 0)) {
+      /* keep dropping until blocked */
+    }
+    // dropPlayerPiece re-checks collision one row down, finds it now
+    // blocked, and locks immediately - reusing the exact same
+    // lock/clear-lines/spawn-next/game-over logic the gravity tick uses.
+    this.dropPlayerPiece(player);
   }
 
   async webSocketClose(ws, code, reason, wasClean) {
