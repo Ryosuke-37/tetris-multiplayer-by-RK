@@ -99,7 +99,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** Pieces stack correctly on top of each other and on the floor; a new piece spawns automatically after the previous one locks.
 
 ### 1.7 — Line clearing & scoring
-- [ ] **Dependencies:** 1.6
+- [x] **Dependencies:** 1.6
 - **Files:** `public/game.js`
 - **What it does:** Detects any fully-filled horizontal row, removes it, shifts everything above it down, and awards points (with a bigger bonus for clearing multiple rows at once, per standard Tetris scoring).
 - **Definition of Done:** Filling a row makes it visibly disappear with rows above shifting down; the score display updates with the correct point value for 1/2/3/4-line clears.

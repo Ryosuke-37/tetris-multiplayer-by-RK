@@ -41,11 +41,15 @@ const SHAPES = {
 };
 const SHAPE_NAMES = Object.keys(SHAPES);
 
+const LINE_SCORES = { 1: 100, 2: 300, 3: 500, 4: 800 };
+
 const boardCanvas = document.getElementById('board');
 const boardCtx = boardCanvas.getContext('2d');
+const scoreEl = document.getElementById('score');
 
 let board = createEmptyBoard();
 let current = spawnPiece(randomShapeName());
+let score = 0;
 
 function createEmptyBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
@@ -148,8 +152,26 @@ function lockPiece() {
     });
   });
 
+  clearLines();
+
   current = spawnPiece(randomShapeName());
   render();
+}
+
+function clearLines() {
+  let cleared = 0;
+  for (let row = ROWS - 1; row >= 0; row--) {
+    if (board[row].every((cell) => cell)) {
+      board.splice(row, 1);
+      board.unshift(Array(COLS).fill(0));
+      cleared++;
+      row++;
+    }
+  }
+  if (cleared === 0) return;
+
+  score += LINE_SCORES[cleared] || 0;
+  scoreEl.textContent = score;
 }
 
 function hardDrop() {
