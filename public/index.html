@@ -7,32 +7,26 @@
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <main class="game-screen">
-    <h1 class="title">Tetris</h1>
-    <div class="game-layout">
-      <div class="board-area">
-        <canvas id="board" width="300" height="600"></canvas>
-      </div>
-      <div class="side-panel">
-        <section class="panel next-panel">
-          <h2>Next</h2>
-          <canvas id="next-canvas" width="120" height="120"></canvas>
-        </section>
-        <section class="panel score-panel">
-          <p>Score<br /><span id="score">0</span></p>
-          <p>Level<br /><span id="level">1</span></p>
-          <p>Lines<br /><span id="lines">0</span></p>
-        </section>
-      </div>
-    </div>
-    <div id="game-over-overlay" class="overlay" hidden>
-      <div class="overlay-content">
-        <h2>Game Over</h2>
-        <p>Final Score: <span id="final-score">0</span></p>
-        <button id="restart-btn">Restart</button>
-      </div>
-    </div>
+  <main class="home-screen">
+    <h1 class="title">Tetris Multiplayer</h1>
+
+    <section class="home-panel">
+      <label for="display-name">Display name</label>
+      <input id="display-name" type="text" maxlength="20" placeholder="Enter your name" autocomplete="off" />
+      <p id="name-error" class="field-error" hidden>Enter a display name first.</p>
+    </section>
+
+    <section class="home-panel">
+      <button id="create-room-btn" class="primary-btn">Create Room</button>
+    </section>
+
+    <section class="home-panel">
+      <label for="room-code-input">Room code</label>
+      <input id="room-code-input" type="text" maxlength="6" placeholder="e.g. ABCDE" autocomplete="off" />
+      <button id="join-room-btn" class="secondary-btn">Join Room</button>
+      <p id="code-error" class="field-error" hidden>Enter a valid room code.</p>
+    </section>
   </main>
-  <script src="/game.js" defer></script>
+  <script src="/home.js" defer></script>
 </body>
 </html>

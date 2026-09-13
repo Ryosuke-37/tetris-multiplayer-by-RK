@@ -140,7 +140,7 @@ lobby, over a real WebSocket connection, before we wire up live board
 syncing.
 
 ### 2.1 — Home screen: name entry & create/join room
-- [ ] **Dependencies:** 1.11
+- [x] **Dependencies:** 1.11
 - **Files:** `public/index.html`, `public/styles.css`, `public/home.js` (new)
 - **What it does:** Builds the screen from `ProductSpec.md` §4.1 — display name field, "Create Room" button, room code field + "Join Room" button — with basic validation (can't submit blank fields).
 - **Definition of Done:** Entering a name and clicking "Create Room" generates a room code and navigates to a lobby URL containing that code (e.g. `/room/ABCD`); typing an existing code and clicking "Join Room" navigates to the same lobby URL.

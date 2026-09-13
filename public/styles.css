@@ -24,6 +24,65 @@ body {
   letter-spacing: 0.1em;
 }
 
+.home-screen {
+  max-width: 360px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.home-panel {
+  background: #1f2937;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.home-panel label {
+  display: block;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.home-panel input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #374151;
+  background: #111827;
+  color: #f9fafb;
+  font-size: 1rem;
+}
+
+.field-error {
+  color: #f87171;
+  font-size: 0.8rem;
+  margin: 6px 0 0;
+}
+
+.primary-btn,
+.secondary-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.primary-btn {
+  background: #22d3ee;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.secondary-btn {
+  background: #374151;
+  color: #f9fafb;
+}
+
 .game-layout {
   display: flex;
   gap: 16px;
