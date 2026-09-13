@@ -42,10 +42,47 @@ export class Room {
   }
 
   async webSocketMessage(ws, message) {
-    // Player identity and message handling arrive in Tasks 2.5+.
+    let data;
+    try {
+      data = JSON.parse(message);
+    } catch (err) {
+      return; // ignore malformed messages
+    }
+
+    if (data.type === 'join' && data.payload && typeof data.payload.name === 'string') {
+      // Remembering which display name belongs to which connection has to
+      // survive this Durable Object hibernating (going fully idle) between
+      // messages, so it's stored directly on the socket via
+      // serializeAttachment() rather than in a plain instance field.
+      ws.serializeAttachment({ name: data.payload.name });
+      this.broadcastPlayers();
+    }
   }
 
   async webSocketClose(ws, code, reason, wasClean) {
+    // Broadcast the updated roster (with this socket excluded) before
+    // actually closing it - broadcasting after close() would try to send()
+    // to this same socket and throw, silently killing the whole broadcast
+    // so nobody's list would update.
+    this.broadcastPlayers(ws);
     ws.close(code, reason);
+  }
+
+  broadcastPlayers(excludeSocket = null) {
+    const sockets = this.ctx.getWebSockets().filter((socket) => socket !== excludeSocket);
+    const names = sockets
+      .map((socket) => socket.deserializeAttachment())
+      .filter((attachment) => attachment && attachment.name)
+      .map((attachment) => attachment.name);
+
+    const message = JSON.stringify({ type: 'players', payload: { names } });
+    for (const socket of sockets) {
+      try {
+        socket.send(message);
+      } catch (err) {
+        // Socket is already closing/closed - ignore, it'll drop out of
+        // ctx.getWebSockets() on the next call.
+      }
+    }
   }
 }

@@ -8,6 +8,8 @@
 
   socket.addEventListener('open', () => {
     console.log(`Connected to room ${roomCode}`);
+    const name = sessionStorage.getItem('displayName') || 'Player';
+    socket.send(JSON.stringify({ type: 'join', payload: { name } }));
   });
 
   socket.addEventListener('close', () => {
@@ -16,5 +18,21 @@
 
   socket.addEventListener('error', (event) => {
     console.error('Room WebSocket error', event);
+  });
+
+  socket.addEventListener('message', (event) => {
+    let data;
+    try {
+      data = JSON.parse(event.data);
+    } catch (err) {
+      return;
+    }
+
+    if (data.type === 'players') {
+      console.log('Players in room:', data.payload.names);
+      // Exposed for now so the connection/broadcast logic can be tested
+      // independently; Task 2.6 replaces this with the real lobby UI.
+      window.__roomPlayers = data.payload.names;
+    }
   });
 })();

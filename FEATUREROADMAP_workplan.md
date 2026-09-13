@@ -164,7 +164,7 @@ syncing.
 - **Definition of Done:** Opening the lobby page establishes a visibly open WebSocket connection (checkable in the browser's developer tools) that stays connected.
 
 ### 2.5 — Player identity & lobby presence
-- [ ] **Dependencies:** 2.4
+- [x] **Dependencies:** 2.4
 - **Files:** `src/room.js`, `public/room.js`
 - **What it does:** When a player connects, the Durable Object stores their display name on that specific connection using `ws.serializeAttachment()`, reads it back with `ws.deserializeAttachment()` when needed, and broadcasts the current list of connected players (as a JSON message, e.g. `{"type": "players", "payload": {"names": [...]}}`) to everyone in the room whenever someone joins or leaves.
 - **Definition of Done:** Opening the same room code in two browser tabs with two different names shows both names, live, in both tabs' player lists — and closing one tab removes that name from the other tab's list within a few seconds.
