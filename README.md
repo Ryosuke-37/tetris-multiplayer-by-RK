@@ -43,9 +43,11 @@ pushed to the `claude/multiplayer-tetris-cloudflare-jrjg0a` branch — no
 manual deploy step required. (Once the project is finished, the production
 branch can be switched to `main`.)
 
-See `FEATUREROADMAP_workplan.md` for the full task-by-task build plan, and
-to see what has been built so far (each finished task is checked off
-there).
+All planned features are built and tested (single-player prototype through
+full server-authoritative multiplayer, polish, and error handling). See
+`FEATUREROADMAP_workplan.md` for the full task-by-task build plan and
+progress — the one remaining item is a final live smoke test from two
+genuinely separate devices.
 
 ## Running it locally (once code exists)
 
@@ -90,14 +92,23 @@ The first time you run this yourself, Wrangler will ask you to log in to
 your Cloudflare account in a browser window. Wrangler prints the live URL
 when it finishes.
 
-## Project layout (will fill in as code is added)
+## Project layout
 
 ```
-/                     project root
-  wrangler.jsonc       Cloudflare Workers configuration (how/where this deploys)
-  src/                 server-side code (the Durable Object "referee" per room)
-  public/              the static game page: HTML, CSS, JavaScript sent to the browser
-  ProductSpec.md        what the app does and how it's organized
+/                       project root
+  wrangler.jsonc         Cloudflare Workers configuration (how/where this deploys)
+  src/
+    index.js              Worker entry point - routes /room/:code to its Durable Object
+    room.js                the "Room" Durable Object - one per room code, the referee for that room
+    tetris-engine.js        DOM-free Tetris rules (shapes, movement, scoring) shared by the server
+  public/
+    index.html            the single HTML shell for every screen (home/lobby/game)
+    styles.css             all styling
+    home.js                 home screen: display name, create/join room
+    room.js                  lobby, live game, and results screens once in a room
+    game.js                   Phase 1's original single-player prototype (kept for reference;
+                                no longer linked from index.html - see ProductSpec.md history)
+  ProductSpec.md          what the app does and how it's organized
   FEATUREROADMAP_workplan.md   the build plan, as checkable tasks
 ```
 
