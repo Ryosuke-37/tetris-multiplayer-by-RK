@@ -81,7 +81,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** Reloading the page repeatedly shows different random pieces correctly shaped and centered at the top of the board.
 
 ### 1.4 — Movement & rotation controls
-- [ ] **Dependencies:** 1.3
+- [x] **Dependencies:** 1.3
 - **Files:** `public/game.js`
 - **What it does:** Listens for arrow keys (left/right to slide, down to soft-drop faster, up or a dedicated key to rotate, spacebar to hard-drop instantly to the bottom) and updates the falling piece's position accordingly, without letting it move through walls or already-placed blocks.
 - **Definition of Done:** All controls work correctly from the keyboard; a piece cannot be moved or rotated outside the board or into blocks that are already locked in place.

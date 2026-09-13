@@ -94,4 +94,76 @@ function render() {
   drawPiece(boardCtx, current);
 }
 
+function collides(cells, row, col) {
+  for (let r = 0; r < cells.length; r++) {
+    for (let c = 0; c < cells[r].length; c++) {
+      if (!cells[r][c]) continue;
+      const boardRow = row + r;
+      const boardCol = col + c;
+      if (boardCol < 0 || boardCol >= COLS || boardRow >= ROWS) return true;
+      if (boardRow >= 0 && board[boardRow][boardCol]) return true;
+    }
+  }
+  return false;
+}
+
+function move(dRow, dCol) {
+  const newRow = current.row + dRow;
+  const newCol = current.col + dCol;
+  if (collides(current.cells, newRow, newCol)) return false;
+  current.row = newRow;
+  current.col = newCol;
+  render();
+  return true;
+}
+
+function rotateMatrix(cells) {
+  const size = cells.length;
+  const rotated = Array.from({ length: size }, () => Array(size).fill(0));
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      rotated[c][size - 1 - r] = cells[r][c];
+    }
+  }
+  return rotated;
+}
+
+function rotate() {
+  if (current.name === 'O') return;
+  const rotated = rotateMatrix(current.cells);
+  if (!collides(rotated, current.row, current.col)) {
+    current.cells = rotated;
+    render();
+  }
+}
+
+function hardDrop() {
+  while (move(1, 0)) {
+    /* keep dropping until blocked */
+  }
+}
+
+document.addEventListener('keydown', (event) => {
+  switch (event.key) {
+    case 'ArrowLeft':
+      move(0, -1);
+      break;
+    case 'ArrowRight':
+      move(0, 1);
+      break;
+    case 'ArrowDown':
+      move(1, 0);
+      break;
+    case 'ArrowUp':
+      rotate();
+      break;
+    case ' ':
+      event.preventDefault();
+      hardDrop();
+      break;
+    default:
+      break;
+  }
+});
+
 render();
