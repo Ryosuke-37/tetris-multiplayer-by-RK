@@ -69,7 +69,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** Loading the page shows a styled, empty game layout matching the described structure (board area, next-piece box, score area) on both a laptop-sized and phone-sized browser window.
 
 ### 1.2 — Board data & rendering
-- [ ] **Dependencies:** 1.1
+- [x] **Dependencies:** 1.1
 - **Files:** `public/game.js` (new)
 - **What it does:** Represents the board as a 10-wide × 20-tall grid in JavaScript, and draws it onto the page (an empty grid at first).
 - **Definition of Done:** The 10×20 grid renders visibly and correctly-proportioned inside the board area from 1.1.
