@@ -123,10 +123,13 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** Deliberately stacking to the top ends the game with the correct message and score; the restart button starts a fresh game.
 
 ### 1.11 — Deploy single-player game live ⭐ (multiplayer work cannot begin before this is checked off)
-- [ ] **Dependencies:** 1.1–1.10
+- [x] **Dependencies:** 1.1–1.10
 - **Files:** none (deployment step), `README.md` (update live URL if changed)
 - **What it does:** Deploys the complete single-player game to Cloudflare and confirms it's fully playable — start to game-over — from the public URL, not just on a local machine.
 - **Definition of Done:** A person with no access to this codebase can open the public URL in their own browser and play a full game of Tetris, unassisted, start to finish.
+- **Confirmed:** verified live at https://tetris-multiplayer-by-rk.rkinoshita.workers.dev by the project owner (this session cannot reach the public internet to check independently) — board/next-piece/score panel render correctly, controls work, scoring and leveling work, and game over / restart work correctly.
+
+**🎉 Milestone reached: a complete, working single-player Tetris game is live on the public internet. Per this project's ordering rule, Phase 2 (multiplayer) may now begin.**
 
 ---
 
