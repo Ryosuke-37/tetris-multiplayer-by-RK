@@ -49,10 +49,11 @@ the deploy process works before any game logic exists.
 - **Definition of Done:** `wrangler.jsonc` contains all four settings above; `npm run dev` serves the placeholder page locally without config errors.
 
 ### 0.3 — First live deployment (pipeline smoke test)
-- [ ] **Dependencies:** 0.2
+- [x] **Dependencies:** 0.2
 - **Files:** none (deployment step only), `README.md` (record the live URL once known)
 - **What it does:** Runs the actual deploy to Cloudflare's Workers Free plan and confirms the placeholder page loads from a real, public `*.workers.dev` URL.
 - **Definition of Done:** The placeholder page is reachable at a public URL from any browser, not just locally. This is the milestone that proves "we can ship."
+- **Note:** deployed via Cloudflare's Git integration (Workers Builds) rather than a manual `wrangler deploy`, since this session's network policy blocks outbound access to Cloudflare's own servers. Live at https://tetris-multiplayer-by-rk.rkinoshita.workers.dev, confirmed working by the project owner (this session cannot reach the public internet to verify independently, for the same network-policy reason).
 
 ---
 

@@ -34,11 +34,18 @@ assistant).
 
 ## Project status
 
-This repository starts with three planning documents (this file,
-`ProductSpec.md`, and `FEATUREROADMAP_workplan.md`) before any game code is
-written. See `FEATUREROADMAP_workplan.md` for the full task-by-task build
-plan, and to see what has been built so far (each finished task is checked
-off there).
+**Live URL:** https://tetris-multiplayer-by-rk.rkinoshita.workers.dev
+
+Deployment is handled by Cloudflare's own **Git integration** (also called
+Workers Builds): Cloudflare watches this repository directly and
+automatically rebuilds and republishes the game every time new code is
+pushed to the `claude/multiplayer-tetris-cloudflare-jrjg0a` branch — no
+manual deploy step required. (Once the project is finished, the production
+branch can be switched to `main`.)
+
+See `FEATUREROADMAP_workplan.md` for the full task-by-task build plan, and
+to see what has been built so far (each finished task is checked off
+there).
 
 ## Running it locally (once code exists)
 
@@ -64,17 +71,24 @@ multiplayer against yourself.
 
 ## Deploying it live
 
-Deployment publishes the game to the real internet on Cloudflare's network,
-on the **Workers Free plan** (Cloudflare's no-cost tier for Workers, with
-usage limits generous enough for a small game like this).
+This project runs on the **Workers Free plan** (Cloudflare's no-cost tier
+for Workers, with usage limits generous enough for a small game like this).
+
+Deployment is automatic: Cloudflare's Git integration is connected directly
+to this GitHub repository, so pushing to the tracked branch (see "Project
+status" above) triggers Cloudflare to build and republish the game on its
+own — nothing to run locally.
+
+If you ever need to deploy manually (e.g. testing from a machine with its
+own Cloudflare login), the command is:
 
 ```
 npm run deploy
 ```
 
-The first time you deploy, Wrangler will ask you to log in to your
-Cloudflare account in a browser window. After that, this same command
-re-publishes any changes. Wrangler prints the live URL when it finishes.
+The first time you run this yourself, Wrangler will ask you to log in to
+your Cloudflare account in a browser window. Wrangler prints the live URL
+when it finishes.
 
 ## Project layout (will fill in as code is added)
 
