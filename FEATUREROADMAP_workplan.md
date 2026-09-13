@@ -43,7 +43,7 @@ the deploy process works before any game logic exists.
 - **Definition of Done:** Folder structure exists; `npm install` runs with no errors; a placeholder page ("Tetris Multiplayer — coming soon") exists in `public/index.html`.
 
 ### 0.2 — Configure Cloudflare Workers correctly
-- [ ] **Dependencies:** 0.1
+- [x] **Dependencies:** 0.1
 - **Files:** `wrangler.jsonc`
 - **What it does:** Sets up `wrangler.jsonc` (Wrangler's configuration file) per the required constraints: serves `public/` via `"assets"` with `not_found_handling: "single-page-application"` (meaning: any URL that isn't a real file, like a room-code link, still loads the game page instead of showing a 404 error), `compatibility_date` set to today, and `{"observability": {"enabled": true}}` (turns on Cloudflare's built-in logging/metrics so we can see errors after deploying).
 - **Definition of Done:** `wrangler.jsonc` contains all four settings above; `npm run dev` serves the placeholder page locally without config errors.

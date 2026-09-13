@@ -2,5 +2,13 @@
   "$schema": "https://developers.cloudflare.com/workers-schemas/wrangler.schema.json",
   "name": "tetris-multiplayer-by-rk",
   "main": "src/index.js",
-  "compatibility_date": "2026-09-13"
+  "compatibility_date": "2026-09-13",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
 }
