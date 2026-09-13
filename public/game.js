@@ -42,14 +42,19 @@ const SHAPES = {
 const SHAPE_NAMES = Object.keys(SHAPES);
 
 const LINE_SCORES = { 1: 100, 2: 300, 3: 500, 4: 800 };
+const LINES_PER_LEVEL = 10;
 
 const boardCanvas = document.getElementById('board');
 const boardCtx = boardCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
+const levelEl = document.getElementById('level');
+const linesEl = document.getElementById('lines');
 
 let board = createEmptyBoard();
 let current = spawnPiece(randomShapeName());
 let score = 0;
+let level = 1;
+let linesCleared = 0;
 
 function createEmptyBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
@@ -170,8 +175,18 @@ function clearLines() {
   }
   if (cleared === 0) return;
 
-  score += LINE_SCORES[cleared] || 0;
+  score += (LINE_SCORES[cleared] || 0) * level;
+  linesCleared += cleared;
   scoreEl.textContent = score;
+  linesEl.textContent = linesCleared;
+
+  const newLevel = Math.floor(linesCleared / LINES_PER_LEVEL) + 1;
+  if (newLevel !== level) {
+    level = newLevel;
+    levelEl.textContent = level;
+    dropInterval = Math.max(100, 800 - (level - 1) * 70);
+    startGravity();
+  }
 }
 
 function hardDrop() {

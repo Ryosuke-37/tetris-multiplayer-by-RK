@@ -105,7 +105,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** Filling a row makes it visibly disappear with rows above shifting down; the score display updates with the correct point value for 1/2/3/4-line clears.
 
 ### 1.8 — Level & speed progression
-- [ ] **Dependencies:** 1.7
+- [x] **Dependencies:** 1.7
 - **Files:** `public/game.js`
 - **What it does:** Increases the fall speed as the player clears more lines, and displays the current level.
 - **Definition of Done:** The piece visibly falls faster after enough lines are cleared, and the level number on screen increases accordingly.
