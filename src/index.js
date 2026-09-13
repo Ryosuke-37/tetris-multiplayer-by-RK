@@ -5,13 +5,11 @@ export { Room };
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const roomMatch = url.pathname.match(/^\/room\/([A-Za-z0-9]+)$/);
 
-    // Temporary verification route for Task 2.2 - confirms the Durable
-    // Object is reachable via env.ROOM.getByName(). Task 2.3 replaces this
-    // with the real /room/:code routing used by the game.
-    const testMatch = url.pathname.match(/^\/__do-test\/([A-Za-z0-9]+)$/);
-    if (testMatch) {
-      const room = env.ROOM.getByName(testMatch[1].toUpperCase());
+    if (roomMatch) {
+      const roomCode = roomMatch[1].toUpperCase();
+      const room = env.ROOM.getByName(roomCode);
       return room.fetch(request);
     }
 

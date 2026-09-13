@@ -152,7 +152,7 @@ syncing.
 - **Definition of Done:** The Worker deploys with no configuration errors and a Durable Object can be reached (even with a placeholder response) via `env.ROOM.getByName(roomCode)`.
 
 ### 2.3 — Room code generation & request routing
-- [ ] **Dependencies:** 2.1, 2.2
+- [x] **Dependencies:** 2.1, 2.2
 - **Files:** `src/index.js`
 - **What it does:** Generates short, human-shareable room codes on "Create Room," and routes any request for `/room/:code` (page loads and WebSocket upgrade requests alike) to that room code's specific Durable Object instance.
 - **Definition of Done:** Two different room codes reliably route to two different, isolated Durable Object instances (confirmed by, e.g., temporarily logging the room code inside the Durable Object).
