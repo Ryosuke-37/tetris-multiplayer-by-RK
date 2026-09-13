@@ -307,6 +307,10 @@ export class Room {
         .map((other) => ({
           playerId: other.playerId,
           name: other.name,
+          // A merged grid (locked blocks + current piece) is all a
+          // thumbnail needs to draw - the recipient doesn't need to know
+          // this opponent's separate piece position/shape/next-piece.
+          grid: mergeBoardWithPiece(other.board, other.current),
           score: other.score,
           status: other.status,
         }));

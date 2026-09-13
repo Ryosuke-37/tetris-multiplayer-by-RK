@@ -205,7 +205,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** Pressing a key in one browser tab visibly moves that player's own piece, with the server rejecting any move that would be invalid (e.g. moving into a wall).
 
 ### 3.4 — Broadcast state to all players
-- [ ] **Dependencies:** 3.3
+- [x] **Dependencies:** 3.3
 - **Files:** `src/room.js`
 - **What it does:** After every tick or accepted input, the Durable Object sends each connected player their own full board state plus a lighter-weight summary of every other player's board (enough to draw a small thumbnail: filled cells and score, not every detail).
 - **Definition of Done:** Every connected browser receives up-to-date state for its own board and all opponents' boards within a fraction of a second of any change.
