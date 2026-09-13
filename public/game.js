@@ -51,13 +51,19 @@ const nextCtx = nextCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const levelEl = document.getElementById('level');
 const linesEl = document.getElementById('lines');
+const overlay = document.getElementById('game-over-overlay');
+const finalScoreEl = document.getElementById('final-score');
+const restartBtn = document.getElementById('restart-btn');
 
-let board = createEmptyBoard();
-let score = 0;
-let level = 1;
-let linesCleared = 0;
-let nextName = randomShapeName();
-let current = getNextPieceAndQueue();
+let board;
+let current;
+let nextName;
+let score;
+let level;
+let linesCleared;
+let dropInterval;
+let dropTimer = null;
+let gameOver;
 
 function createEmptyBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
@@ -145,6 +151,7 @@ function collides(cells, row, col) {
 }
 
 function move(dRow, dCol) {
+  if (gameOver) return false;
   const newRow = current.row + dRow;
   const newCol = current.col + dCol;
   if (collides(current.cells, newRow, newCol)) return false;
@@ -166,7 +173,7 @@ function rotateMatrix(cells) {
 }
 
 function rotate() {
-  if (current.name === 'O') return;
+  if (gameOver || current.name === 'O') return;
   const rotated = rotateMatrix(current.cells);
   if (!collides(rotated, current.row, current.col)) {
     current.cells = rotated;
@@ -188,6 +195,10 @@ function lockPiece() {
   clearLines();
 
   current = getNextPieceAndQueue();
+  if (collides(current.cells, current.row, current.col)) {
+    endGame();
+    return;
+  }
   render();
 }
 
@@ -218,6 +229,7 @@ function clearLines() {
 }
 
 function hardDrop() {
+  if (gameOver) return;
   while (move(1, 0)) {
     /* keep dropping until blocked */
   }
@@ -228,9 +240,6 @@ function hardDrop() {
 // prototype. The project's "no setInterval/setTimeout" rule applies to the
 // server-side Durable Object tick loop added in Phase 3, to avoid keeping a
 // server process alive - a timer in the player's own tab costs nothing there.
-let dropInterval = 800;
-let dropTimer = null;
-
 function startGravity() {
   stopGravity();
   dropTimer = setInterval(() => {
@@ -245,7 +254,35 @@ function stopGravity() {
   dropTimer = null;
 }
 
+function endGame() {
+  gameOver = true;
+  stopGravity();
+  finalScoreEl.textContent = score;
+  overlay.hidden = false;
+}
+
+function resetGame() {
+  board = createEmptyBoard();
+  score = 0;
+  level = 1;
+  linesCleared = 0;
+  dropInterval = 800;
+  gameOver = false;
+
+  scoreEl.textContent = score;
+  levelEl.textContent = level;
+  linesEl.textContent = linesCleared;
+  overlay.hidden = true;
+
+  nextName = randomShapeName();
+  current = getNextPieceAndQueue();
+
+  render();
+  startGravity();
+}
+
 document.addEventListener('keydown', (event) => {
+  if (gameOver) return;
   switch (event.key) {
     case 'ArrowLeft':
       move(0, -1);
@@ -268,5 +305,6 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-render();
-startGravity();
+restartBtn.addEventListener('click', resetGame);
+
+resetGame();

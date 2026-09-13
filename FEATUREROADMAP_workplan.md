@@ -117,7 +117,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** The preview box always shows the correct next shape, and it updates the instant the current piece locks.
 
 ### 1.10 — Game over & restart
-- [ ] **Dependencies:** 1.6
+- [x] **Dependencies:** 1.6
 - **Files:** `public/game.js`, `public/index.html`
 - **What it does:** Detects when a new piece can't spawn because the stack is too high, stops the game, shows a "Game Over" message with the final score, and offers a restart button.
 - **Definition of Done:** Deliberately stacking to the top ends the game with the correct message and score; the restart button starts a fresh game.

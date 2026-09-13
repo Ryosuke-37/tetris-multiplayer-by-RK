@@ -87,6 +87,10 @@ body {
   justify-content: center;
 }
 
+.overlay[hidden] {
+  display: none;
+}
+
 .overlay-content {
   background: #1f2937;
   padding: 24px 32px;
