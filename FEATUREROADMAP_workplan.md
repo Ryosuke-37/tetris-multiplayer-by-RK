@@ -87,7 +87,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** All controls work correctly from the keyboard; a piece cannot be moved or rotated outside the board or into blocks that are already locked in place.
 
 ### 1.5 — Gravity tick loop
-- [ ] **Dependencies:** 1.4
+- [x] **Dependencies:** 1.4
 - **Files:** `public/game.js`
 - **What it does:** Makes the current piece automatically fall one row on a repeating timer. (Note: for this single-player, browser-only phase, an ordinary JavaScript timer in the browser tab is fine — the "no `setInterval`" rule in this project applies specifically to server-side Durable Object code in Phase 3, to avoid keeping a server process alive; a timer in the player's own browser tab costs nothing on the server.)
 - **Definition of Done:** The piece falls automatically at a steady rate without needing any key press.

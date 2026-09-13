@@ -143,6 +143,25 @@ function hardDrop() {
   }
 }
 
+// A plain browser timer is fine here: this is a client-side, single-player
+// prototype. The project's "no setInterval/setTimeout" rule applies to the
+// server-side Durable Object tick loop added in Phase 3, to avoid keeping a
+// server process alive - a timer in the player's own tab costs nothing there.
+let dropInterval = 800;
+let dropTimer = null;
+
+function startGravity() {
+  stopGravity();
+  dropTimer = setInterval(() => {
+    move(1, 0);
+  }, dropInterval);
+}
+
+function stopGravity() {
+  if (dropTimer) clearInterval(dropTimer);
+  dropTimer = null;
+}
+
 document.addEventListener('keydown', (event) => {
   switch (event.key) {
     case 'ArrowLeft':
@@ -167,3 +186,4 @@ document.addEventListener('keydown', (event) => {
 });
 
 render();
+startGravity();
