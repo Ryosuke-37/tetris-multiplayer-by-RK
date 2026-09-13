@@ -1,1 +1,93 @@
-# tetris-multiplayer-by-RK
+# Tetris Multiplayer (by RK)
+
+A browser-based, real-time multiplayer Tetris game. Two or more players join
+the same **room code** and play at the same time, watching each other's
+boards update live — no app to install, just a web page.
+
+Built by Ryosuke Kinoshita ([rkinoshita@brandeis.edu](mailto:rkinoshita@brandeis.edu)),
+with implementation assistance from Claude Code (Anthropic's AI coding
+assistant).
+
+> **Design note:** No Figma file was available when this project's planning
+> documents were written, so the screens described in `ProductSpec.md` follow
+> standard, sensible Tetris UI conventions rather than a specific mockup. If a
+> Figma design is provided later, we will compare it against what's built and
+> call out anything that isn't buildable within our technical constraints
+> instead of silently changing it.
+
+## What this is, in plain terms
+
+- **Cloudflare Workers**: the hosting platform this game runs on. Instead of
+  renting a traditional server that is always on, your code runs in small,
+  short-lived bursts on Cloudflare's global network, only when a request
+  comes in. This is cheaper and simpler to operate for a small game like
+  this.
+- **Durable Object**: a special kind of Cloudflare Worker that Cloudflare
+  guarantees will only ever run as a *single instance* for a given ID (in our
+  case, one per room code). This matters because Tetris multiplayer needs one
+  "referee" that all players in a room talk to, so everyone sees the same
+  game state — a Durable Object is that referee.
+- **WebSocket**: a connection between a player's browser and the server that
+  stays open, so the server can push updates (like "the other player just
+  moved a piece") the instant they happen, instead of the browser having to
+  keep asking "anything new?" over and over.
+
+## Project status
+
+This repository starts with three planning documents (this file,
+`ProductSpec.md`, and `FEATUREROADMAP_workplan.md`) before any game code is
+written. See `FEATUREROADMAP_workplan.md` for the full task-by-task build
+plan, and to see what has been built so far (each finished task is checked
+off there).
+
+## Running it locally (once code exists)
+
+You'll need:
+
+1. **Node.js** — a program that lets JavaScript run outside a web browser,
+   used here only to run developer tools (not to host the game itself).
+   Install the LTS version from [nodejs.org](https://nodejs.org).
+2. **Wrangler** — Cloudflare's command-line tool (a program you run from a
+   terminal) for developing and deploying Workers. It's installed
+   automatically as a project dependency; you don't need to install it
+   separately.
+
+Once the project has code, from the project's root folder:
+
+```
+npm install       # downloads the project's tools and libraries
+npm run dev       # starts a local copy of the game at http://localhost:8787
+```
+
+Open that address in two different browser tabs (or two browsers) to try
+multiplayer against yourself.
+
+## Deploying it live
+
+Deployment publishes the game to the real internet on Cloudflare's network,
+on the **Workers Free plan** (Cloudflare's no-cost tier for Workers, with
+usage limits generous enough for a small game like this).
+
+```
+npm run deploy
+```
+
+The first time you deploy, Wrangler will ask you to log in to your
+Cloudflare account in a browser window. After that, this same command
+re-publishes any changes. Wrangler prints the live URL when it finishes.
+
+## Project layout (will fill in as code is added)
+
+```
+/                     project root
+  wrangler.jsonc       Cloudflare Workers configuration (how/where this deploys)
+  src/                 server-side code (the Durable Object "referee" per room)
+  public/              the static game page: HTML, CSS, JavaScript sent to the browser
+  ProductSpec.md        what the app does and how it's organized
+  FEATUREROADMAP_workplan.md   the build plan, as checkable tasks
+```
+
+## Docs
+
+- [`ProductSpec.md`](./ProductSpec.md) — what the app does and how it's organized.
+- [`FEATUREROADMAP_workplan.md`](./FEATUREROADMAP_workplan.md) — the full build plan as checkbox tasks, in build order.
