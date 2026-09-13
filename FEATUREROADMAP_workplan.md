@@ -217,7 +217,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** With two browser tabs open in the same room, moves made in one tab appear, live, on the opponent thumbnail in the other tab (and vice versa).
 
 ### 3.6 — Persist state to SQLite each tick
-- [ ] **Dependencies:** 3.2
+- [x] **Dependencies:** 3.2
 - **Files:** `src/room.js`
 - **What it does:** Saves the room's current game state to the Durable Object's built-in SQLite storage after every tick and every accepted player action, so a room recovers its exact in-progress state if the Durable Object briefly hibernates and wakes back up.
 - **Definition of Done:** Forcing the Durable Object to restart mid-game (e.g. via a brief deploy or an intentional test hook) resumes the game from the last saved state rather than resetting it.

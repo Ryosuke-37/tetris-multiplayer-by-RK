@@ -28,6 +28,52 @@ export class Room {
     this.requestCount = 0;
     this.gameState = 'lobby'; // 'lobby' | 'playing' | 'results'
     this.players = new Map(); // playerId -> player state, populated by startGame()
+
+    // blockConcurrencyWhile makes every fetch/webSocketMessage/alarm call
+    // wait for this to finish before running, so the Durable Object never
+    // handles a request against half-loaded state after waking back up
+    // from hibernation (or a redeploy) mid-round.
+    this.ctx.blockConcurrencyWhile(async () => {
+      await this.loadState();
+    });
+  }
+
+  // Reloads gameState/players from this Durable Object's own SQLite-backed
+  // storage (see the "new_sqlite_classes" migration in wrangler.jsonc).
+  // Hibernatable WebSockets (ctx.acceptWebSocket) survive the Durable
+  // Object itself being evicted from memory, so ctx.getWebSockets() here
+  // still returns the same live connections with their playerId
+  // attachments intact - used to re-link each restored player record back
+  // to its actual socket.
+  async loadState() {
+    const stored = await this.ctx.storage.get('gameState');
+    if (!stored) return;
+
+    this.gameState = stored.gameState;
+
+    const socketByPlayerId = new Map();
+    for (const socket of this.ctx.getWebSockets()) {
+      const attachment = socket.deserializeAttachment();
+      if (attachment && attachment.playerId) {
+        socketByPlayerId.set(attachment.playerId, socket);
+      }
+    }
+
+    for (const playerData of stored.players) {
+      this.players.set(playerData.playerId, {
+        ...playerData,
+        socket: socketByPlayerId.get(playerData.playerId) || null,
+      });
+    }
+  }
+
+  async persistState() {
+    if (this.gameState === 'lobby') {
+      await this.ctx.storage.delete('gameState');
+      return;
+    }
+    const players = [...this.players.values()].map(({ socket, ...rest }) => rest);
+    await this.ctx.storage.put('gameState', { gameState: this.gameState, players });
   }
 
   async fetch(request) {
@@ -85,17 +131,17 @@ export class Room {
     }
 
     if (data.type === 'start') {
-      this.startGame();
+      await this.startGame();
       return;
     }
 
     if (data.type === 'input' && data.payload && typeof data.payload.action === 'string') {
-      this.handleInput(ws, data.payload.action);
+      await this.handleInput(ws, data.payload.action);
       return;
     }
   }
 
-  handleInput(ws, action) {
+  async handleInput(ws, action) {
     const attachment = ws.deserializeAttachment();
     const player = attachment && attachment.playerId ? this.players.get(attachment.playerId) : null;
     // The server, not the browser, decides whether a move is legal - a
@@ -124,6 +170,7 @@ export class Room {
     }
 
     this.broadcastState();
+    await this.persistState();
   }
 
   movePiece(player, dRow, dCol) {
@@ -184,7 +231,7 @@ export class Room {
   // initialized board and first piece, tracked here in the Durable Object
   // (not trusted from the browser). Tick loop (3.2), input handling (3.3),
   // and state broadcast (3.4) build on top of this.
-  startGame() {
+  async startGame() {
     if (this.gameState === 'playing') return;
 
     this.gameState = 'playing';
@@ -224,7 +271,8 @@ export class Room {
     }
 
     this.broadcastState();
-    this.scheduleAlarm();
+    await this.persistState();
+    await this.scheduleAlarm();
   }
 
   async scheduleAlarm() {
@@ -250,6 +298,7 @@ export class Room {
     }
 
     this.broadcastState();
+    await this.persistState();
 
     if (anyPlaying) {
       await this.scheduleAlarm();
@@ -316,6 +365,8 @@ export class Room {
           score: other.score,
           status: other.status,
         }));
+
+      if (!player.socket) continue; // reloaded from storage but not yet re-linked to a live socket
 
       const message = JSON.stringify({ type: 'state', payload: { you, opponents } });
       try {
