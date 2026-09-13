@@ -21,6 +21,10 @@ import {
 // everyone still falls at their own correct speed off a single alarm.
 const BASE_TICK_MS = 100;
 
+// Keeps opponent-thumbnail layouts sane and gives a room a sensible cap;
+// ProductSpec lists this as an optional edge case to handle.
+const MAX_PLAYERS = 6;
+
 export class Room {
   constructor(ctx, env) {
     this.ctx = ctx;
@@ -28,6 +32,7 @@ export class Room {
     this.requestCount = 0;
     this.gameState = 'lobby'; // 'lobby' | 'playing' | 'results'
     this.players = new Map(); // playerId -> player state, populated by startGame()
+    this.roomExists = false; // true once someone has actually created this room
 
     // blockConcurrencyWhile makes every fetch/webSocketMessage/alarm call
     // wait for this to finish before running, so the Durable Object never
@@ -46,6 +51,9 @@ export class Room {
   // attachments intact - used to re-link each restored player record back
   // to its actual socket.
   async loadState() {
+    const roomExists = await this.ctx.storage.get('roomExists');
+    this.roomExists = !!roomExists;
+
     const stored = await this.ctx.storage.get('gameState');
     if (!stored) return;
 
@@ -121,11 +129,56 @@ export class Room {
     }
 
     if (data.type === 'join' && data.payload && typeof data.payload.name === 'string') {
+      const name = data.payload.name.trim();
+      if (!name) return; // the client already validates this; don't crash on a hand-crafted empty name
+
+      if (this.gameState !== 'lobby') {
+        // ProductSpec explicitly rules out late joining mid-round, so
+        // reject rather than leaving the client stuck on a lobby screen
+        // that will never receive the "start" it missed.
+        this.sendError(ws, 'This game has already started. Ask for a new room code.');
+        closeSocket(ws, 4000, 'Round already in progress');
+        return;
+      }
+
+      // Durable Objects are created lazily just by looking them up, so a
+      // mistyped room code would otherwise silently "work" as a brand new,
+      // empty room instead of surfacing as an error. Only a "join" sent
+      // right after Create Room marks a room as actually existing.
+      if (!data.payload.isCreator && !this.roomExists) {
+        this.sendError(ws, 'Room not found. Check the code and try again.');
+        closeSocket(ws, 4004, 'Room not found');
+        return;
+      }
+
+      const existingNames = this.ctx
+        .getWebSockets()
+        .map((socket) => socket.deserializeAttachment())
+        .filter((attachment) => attachment && attachment.name)
+        .map((attachment) => attachment.name.toLowerCase());
+
+      if (existingNames.length >= MAX_PLAYERS) {
+        this.sendError(ws, `This room is full (max ${MAX_PLAYERS} players).`);
+        closeSocket(ws, 4008, 'Room full');
+        return;
+      }
+
+      if (existingNames.includes(name.toLowerCase())) {
+        this.sendError(ws, 'That name is already taken in this room.');
+        closeSocket(ws, 4009, 'Duplicate name');
+        return;
+      }
+
+      if (data.payload.isCreator) {
+        this.roomExists = true;
+        await this.ctx.storage.put('roomExists', true);
+      }
+
       // Remembering which display name belongs to which connection has to
       // survive this Durable Object hibernating (going fully idle) between
       // messages, so it's stored directly on the socket via
       // serializeAttachment() rather than in a plain instance field.
-      ws.serializeAttachment({ name: data.payload.name });
+      ws.serializeAttachment({ name });
       this.broadcastPlayers();
       return;
     }
@@ -260,6 +313,14 @@ export class Room {
       await this.persistState();
     }
     closeSocket(ws, code, reason);
+  }
+
+  sendError(ws, message) {
+    try {
+      ws.send(JSON.stringify({ type: 'error', payload: { message } }));
+    } catch (err) {
+      // Ignore - nothing to notify, the socket is already gone.
+    }
   }
 
   broadcastPlayers(excludeSocket = null) {

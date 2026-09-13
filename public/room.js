@@ -255,7 +255,8 @@
   socket.addEventListener('open', () => {
     console.log(`Connected to room ${roomCode}`);
     const name = sessionStorage.getItem('displayName') || 'Player';
-    socket.send(JSON.stringify({ type: 'join', payload: { name } }));
+    const isCreator = sessionStorage.getItem('isCreator') === 'true';
+    socket.send(JSON.stringify({ type: 'join', payload: { name, isCreator } }));
   });
 
   socket.addEventListener('close', () => {
@@ -271,6 +272,16 @@
     try {
       data = JSON.parse(event.data);
     } catch (err) {
+      return;
+    }
+
+    if (data.type === 'error') {
+      // The server is about to close this connection (room not found,
+      // duplicate name, room full, or the round already started) - stash
+      // the message for the home screen to show, since it can't be shown
+      // here on a page that's about to navigate away.
+      sessionStorage.setItem('joinError', data.payload.message);
+      window.location.href = '/';
       return;
     }
 

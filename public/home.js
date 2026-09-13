@@ -7,6 +7,18 @@ const createBtn = document.getElementById('create-room-btn');
 const codeInput = document.getElementById('room-code-input');
 const codeError = document.getElementById('code-error');
 const joinBtn = document.getElementById('join-room-btn');
+const joinError = document.getElementById('join-error');
+
+// A room.js redirect back here (room not found, duplicate name, room
+// full, round already started) stashes its message in sessionStorage
+// before navigating, since the WebSocket that reported it is already gone
+// by the time this page loads.
+const storedJoinError = sessionStorage.getItem('joinError');
+if (storedJoinError) {
+  sessionStorage.removeItem('joinError');
+  joinError.textContent = storedJoinError;
+  joinError.hidden = false;
+}
 
 function getTrimmedName() {
   return nameInput.value.trim();
@@ -31,18 +43,21 @@ function generateRoomCode() {
   return code;
 }
 
-function goToRoom(code, name) {
+function goToRoom(code, name, isCreator) {
   sessionStorage.setItem('displayName', name);
+  sessionStorage.setItem('isCreator', isCreator ? 'true' : 'false');
   window.location.href = `/room/${code}`;
 }
 
 createBtn.addEventListener('click', () => {
+  joinError.hidden = true;
   const name = requireName();
   if (!name) return;
-  goToRoom(generateRoomCode(), name);
+  goToRoom(generateRoomCode(), name, true);
 });
 
 joinBtn.addEventListener('click', () => {
+  joinError.hidden = true;
   const name = requireName();
   if (!name) return;
 
@@ -53,7 +68,7 @@ joinBtn.addEventListener('click', () => {
     return;
   }
   codeError.hidden = true;
-  goToRoom(code, name);
+  goToRoom(code, name, false);
 });
 
 [nameInput, codeInput].forEach((input) => {

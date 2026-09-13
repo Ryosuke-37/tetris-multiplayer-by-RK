@@ -271,10 +271,11 @@ and confirmed working live with real separate browsers/devices.
 - **Confirmed:** the flex-wrap/max-width patterns already in place since earlier phases hold up correctly - verified no horizontal overflow at 320/375/768/1024/1440px across home, lobby (including 5 players), game screen (including 4 live opponent thumbnails), and the results overlay; visually confirmed via screenshot that opponent cards wrap into a clean 2-column grid at 360px with everything legible. No layout changes were needed. Stress-testing with several players disconnecting via abruptly-closed browser contexts did surface a real bug (unrelated to responsiveness): the runtime's reserved 1006 "abnormal closure" code was being forwarded straight into `ws.close()`, which throws, on every non-clean disconnect (a crashed tab, a network drop - the common real-world case). Fixed with a small `closeSocket()` helper that only re-sends a code the app is actually allowed to send.
 
 ### 4.3 — Error & edge-case states
-- [ ] **Dependencies:** 4.1
+- [x] **Dependencies:** 4.1
 - **Files:** `src/room.js`, `public/home.js`, `public/room.js`
 - **What it does:** Handles and clearly messages: joining a room code that doesn't exist, a duplicate display name in the same room, and (optionally) a maximum room size.
 - **Definition of Done:** Attempting each of the above shows a clear, human-readable message instead of a silent failure or a broken screen.
+- **Confirmed:** also added a 4th check beyond the three named - joining a room whose round already started - since Durable Objects are created lazily just by looking them up, so without this a mistyped code, a duplicate name, or a late join would otherwise silently "succeed" into a broken state rather than surface as an error. Verified with a headless test covering all four: normal create/join still works; a case-insensitive duplicate name is rejected; joining after Start Game is rejected; a room code nobody ever created shows "Room not found"; a 7th player is rejected once a room hits the 6-player cap. Also reran the full rematch-flow regression test to confirm the join-path changes didn't affect anything downstream.
 
 ### 4.4 — Final live multiplayer smoke test & deploy
 - [ ] **Dependencies:** 4.1, 4.2, 4.3
