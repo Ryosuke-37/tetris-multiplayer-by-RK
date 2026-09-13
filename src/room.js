@@ -365,6 +365,12 @@ export class Room {
   // Ends the round once at most one player is still actively playing
   // (everyone else has topped out or disconnected) - "the last remaining
   // player wins," or if literally everyone has topped out, nobody does.
+  // This is also what satisfies the "cancel the alarm once the last
+  // player leaves" requirement: since every disconnect runs this check,
+  // the disconnect that brings active players down to zero is the same
+  // one that transitions gameState away from 'playing' and calls
+  // ctx.storage.deleteAlarm() below - there's no separate "is the room
+  // now empty?" check needed on top of this.
   async checkForGameEnd() {
     if (this.gameState !== 'playing') return;
 

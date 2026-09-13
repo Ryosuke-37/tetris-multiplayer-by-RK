@@ -241,10 +241,13 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** Clicking "Play Again" in one tab returns all connected tabs to a fresh lobby for the same room code, ready to start a new round.
 
 ### 3.10 — Alarm cancellation & room cleanup
-- [ ] **Dependencies:** 3.2, 3.7
+- [x] **Dependencies:** 3.2, 3.7
 - **Files:** `src/room.js`
 - **What it does:** When the last remaining player disconnects from a room, cancels any pending Alarm and lets the Durable Object go fully idle (per the project's Free-plan efficiency requirement), rather than continuing to tick an empty room forever.
 - **Definition of Done:** Confirmed (e.g. via Cloudflare's dashboard/logs from the observability setting in 0.2) that an empty room has no further alarm activity after its last player leaves.
+- **Confirmed:** already satisfied as a direct consequence of Task 3.8's checkForGameEnd() - every disconnect runs it, so the disconnect that brings active players down to zero is the same one that cancels the pending alarm. Verified locally with a temporary logging hook (added, used, then removed before committing): with two players connected, the alarm fired ~every 100ms as expected; the moment both disconnected mid-round (before the round would have ended naturally), alarm activity stopped completely with zero further firings over 3+ seconds.
+
+**🎉 Milestone reached: Phase 3 (server-authoritative multiplayer gameplay) is complete.** The Durable Object is now the sole authority on every player's board, ticking via Alarms (never setInterval/setTimeout), broadcasting live state to everyone, persisting to SQLite, and correctly handling disconnects, game-end, and rematches - all the way down to not wasting any Workers Free plan usage on an empty room. Per this project's ordering rule, Phase 4 (polish and the final live multiplayer smoke test) may now begin.
 
 ---
 
