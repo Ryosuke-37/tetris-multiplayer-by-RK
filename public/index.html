@@ -4,23 +4,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Tetris Multiplayer</title>
-  <style>
-    body {
-      margin: 0;
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-      background: #111827;
-      color: #f9fafb;
-      font-family: system-ui, sans-serif;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <main>
-    <h1>Tetris Multiplayer</h1>
-    <p>Coming soon.</p>
+  <main class="game-screen">
+    <h1 class="title">Tetris</h1>
+    <div class="game-layout">
+      <div class="board-area">
+        <canvas id="board" width="300" height="600"></canvas>
+      </div>
+      <div class="side-panel">
+        <section class="panel next-panel">
+          <h2>Next</h2>
+          <canvas id="next-canvas" width="120" height="120"></canvas>
+        </section>
+        <section class="panel score-panel">
+          <p>Score<br /><span id="score">0</span></p>
+          <p>Level<br /><span id="level">1</span></p>
+          <p>Lines<br /><span id="lines">0</span></p>
+        </section>
+      </div>
+    </div>
+    <div id="game-over-overlay" class="overlay" hidden>
+      <div class="overlay-content">
+        <h2>Game Over</h2>
+        <p>Final Score: <span id="final-score">0</span></p>
+        <button id="restart-btn">Restart</button>
+      </div>
+    </div>
   </main>
 </body>
 </html>

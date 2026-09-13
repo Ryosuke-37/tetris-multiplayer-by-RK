@@ -63,7 +63,7 @@ Goal: one person, alone, can play a complete, correct game of Tetris in
 their browser, and it's deployed live. No room codes, no other players yet.
 
 ### 1.1 — Game screen layout & styling shell
-- [ ] **Dependencies:** 0.3
+- [x] **Dependencies:** 0.3
 - **Files:** `public/index.html`, `public/styles.css`
 - **What it does:** Builds the static visual structure for the game screen described in `ProductSpec.md` §4.3: the main board area, a "next piece" box, and a score/level display — using plain HTML and CSS (no game logic yet, just empty boxes in the right places).
 - **Definition of Done:** Loading the page shows a styled, empty game layout matching the described structure (board area, next-piece box, score area) on both a laptop-sized and phone-sized browser window.
