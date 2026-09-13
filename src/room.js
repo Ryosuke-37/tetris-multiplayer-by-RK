@@ -239,7 +239,7 @@ export class Room {
       // send() to this same socket and throw, silently killing the whole
       // broadcast so nobody's list would update.
       this.broadcastPlayers(ws);
-      ws.close(code, reason);
+      closeSocket(ws, code, reason);
       return;
     }
 
@@ -259,7 +259,7 @@ export class Room {
       }
       await this.persistState();
     }
-    ws.close(code, reason);
+    closeSocket(ws, code, reason);
   }
 
   broadcastPlayers(excludeSocket = null) {
@@ -470,5 +470,25 @@ export class Room {
         // Ignore - handled by webSocketClose when the runtime notices.
       }
     }
+  }
+}
+
+// webSocketClose() receives whatever close code the runtime reports, which
+// includes reserved codes like 1006 ("abnormal closure" - a network drop,
+// a crashed tab, a force-closed browser) that the WebSocket spec forbids
+// passing back into an explicit close() call. Forwarding one of those
+// blindly throws. This only ever re-sends a code the application is
+// actually allowed to send (1000, or the app-defined 3000-4999 range);
+// anything else just closes without a code.
+function closeSocket(ws, code, reason) {
+  try {
+    const canForwardCode = code === 1000 || (code >= 3000 && code <= 4999);
+    if (canForwardCode) {
+      ws.close(code, reason);
+    } else {
+      ws.close();
+    }
+  } catch (err) {
+    // Ignore - the underlying connection is already gone either way.
   }
 }

@@ -264,10 +264,11 @@ and confirmed working live with real separate browsers/devices.
 - **Confirmed:** still no Figma file provided, so nothing to reconcile against (flagged again here so it isn't missed if one shows up later). Added hover/active states and a focus outline to buttons/inputs, a favicon, a dynamic "Ready to start!" lobby hint, and removed a vestigial Phase-1 CSS rule that was silently overriding button spacing via specificity. Verified visually via screenshots on a 400px-wide viewport.
 
 ### 4.2 — Responsive layout check
-- [ ] **Dependencies:** 4.1
+- [x] **Dependencies:** 4.1
 - **Files:** `public/styles.css`
 - **What it does:** Verifies and fixes layout on common phone and tablet screen widths, since opponent-board thumbnails and the main board need to fit without horizontal scrolling.
 - **Definition of Done:** All screens are usable (no cut-off or overlapping elements) at common phone, tablet, and desktop widths.
+- **Confirmed:** the flex-wrap/max-width patterns already in place since earlier phases hold up correctly - verified no horizontal overflow at 320/375/768/1024/1440px across home, lobby (including 5 players), game screen (including 4 live opponent thumbnails), and the results overlay; visually confirmed via screenshot that opponent cards wrap into a clean 2-column grid at 360px with everything legible. No layout changes were needed. Stress-testing with several players disconnecting via abruptly-closed browser contexts did surface a real bug (unrelated to responsiveness): the runtime's reserved 1006 "abnormal closure" code was being forwarded straight into `ws.close()`, which throws, on every non-clean disconnect (a crashed tab, a network drop - the common real-world case). Fixed with a small `closeSocket()` helper that only re-sends a code the app is actually allowed to send.
 
 ### 4.3 — Error & edge-case states
 - [ ] **Dependencies:** 4.1
