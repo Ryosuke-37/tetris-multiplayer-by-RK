@@ -34,11 +34,22 @@ assistant).
 
 ## Project status
 
-This repository starts with three planning documents (this file,
-`ProductSpec.md`, and `FEATUREROADMAP_workplan.md`) before any game code is
-written. See `FEATUREROADMAP_workplan.md` for the full task-by-task build
-plan, and to see what has been built so far (each finished task is checked
-off there).
+**Live URL:** https://tetris-multiplayer-by-rk.rkinoshita.workers.dev
+
+Deployment is handled by Cloudflare's own **Git integration** (also called
+Workers Builds): Cloudflare watches this repository directly and
+automatically rebuilds and republishes the game every time new code is
+pushed to the `claude/multiplayer-tetris-cloudflare-jrjg0a` branch — no
+manual deploy step required. (Once the project is finished, the production
+branch can be switched to `main`.)
+
+**🎉 Project complete.** Every task in `FEATUREROADMAP_workplan.md` is
+checked off, including a live smoke test played between two separate real
+devices: room creation and joining, live opponent board sync, game over,
+the results screen, and a rematch via Play Again all confirmed working on
+the public internet. See that file for the full build history, or the
+"Later / stretch ideas" list at its end for optional features (mobile
+touch controls, sound, etc.) that were intentionally left out of scope.
 
 ## Running it locally (once code exists)
 
@@ -64,26 +75,42 @@ multiplayer against yourself.
 
 ## Deploying it live
 
-Deployment publishes the game to the real internet on Cloudflare's network,
-on the **Workers Free plan** (Cloudflare's no-cost tier for Workers, with
-usage limits generous enough for a small game like this).
+This project runs on the **Workers Free plan** (Cloudflare's no-cost tier
+for Workers, with usage limits generous enough for a small game like this).
+
+Deployment is automatic: Cloudflare's Git integration is connected directly
+to this GitHub repository, so pushing to the tracked branch (see "Project
+status" above) triggers Cloudflare to build and republish the game on its
+own — nothing to run locally.
+
+If you ever need to deploy manually (e.g. testing from a machine with its
+own Cloudflare login), the command is:
 
 ```
 npm run deploy
 ```
 
-The first time you deploy, Wrangler will ask you to log in to your
-Cloudflare account in a browser window. After that, this same command
-re-publishes any changes. Wrangler prints the live URL when it finishes.
+The first time you run this yourself, Wrangler will ask you to log in to
+your Cloudflare account in a browser window. Wrangler prints the live URL
+when it finishes.
 
-## Project layout (will fill in as code is added)
+## Project layout
 
 ```
-/                     project root
-  wrangler.jsonc       Cloudflare Workers configuration (how/where this deploys)
-  src/                 server-side code (the Durable Object "referee" per room)
-  public/              the static game page: HTML, CSS, JavaScript sent to the browser
-  ProductSpec.md        what the app does and how it's organized
+/                       project root
+  wrangler.jsonc         Cloudflare Workers configuration (how/where this deploys)
+  src/
+    index.js              Worker entry point - routes /room/:code to its Durable Object
+    room.js                the "Room" Durable Object - one per room code, the referee for that room
+    tetris-engine.js        DOM-free Tetris rules (shapes, movement, scoring) shared by the server
+  public/
+    index.html            the single HTML shell for every screen (home/lobby/game)
+    styles.css             all styling
+    home.js                 home screen: display name, create/join room
+    room.js                  lobby, live game, and results screens once in a room
+    game.js                   Phase 1's original single-player prototype (kept for reference;
+                                no longer linked from index.html - see ProductSpec.md history)
+  ProductSpec.md          what the app does and how it's organized
   FEATUREROADMAP_workplan.md   the build plan, as checkable tasks
 ```
 

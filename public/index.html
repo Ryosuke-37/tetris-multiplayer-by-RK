@@ -3,24 +3,56 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
   <title>Tetris Multiplayer</title>
-  <style>
-    body {
-      margin: 0;
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-      background: #111827;
-      color: #f9fafb;
-      font-family: system-ui, sans-serif;
-      text-align: center;
-    }
-  </style>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230f172a'/%3E%3Crect x='2' y='2' width='9' height='9' fill='%2322d3ee'/%3E%3Crect x='13' y='2' width='9' height='9' fill='%23f87171'/%3E%3Crect x='2' y='13' width='9' height='9' fill='%23facc15'/%3E%3Crect x='13' y='13' width='9' height='9' fill='%234ade80'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <main>
-    <h1>Tetris Multiplayer</h1>
-    <p>Coming soon.</p>
+  <main class="home-screen" id="home-screen">
+    <h1 class="title">Tetris Multiplayer</h1>
+    <p id="join-error" class="field-error" hidden></p>
+
+    <section class="home-panel">
+      <label for="display-name">Display name</label>
+      <input id="display-name" type="text" maxlength="20" placeholder="Enter your name" autocomplete="off" />
+      <p id="name-error" class="field-error" hidden>Enter a display name first.</p>
+    </section>
+
+    <section class="home-panel">
+      <button id="create-room-btn" class="primary-btn">Create Room</button>
+    </section>
+
+    <section class="home-panel">
+      <label for="room-code-input">Room code</label>
+      <input id="room-code-input" type="text" maxlength="6" placeholder="e.g. ABCDE" autocomplete="off" />
+      <button id="join-room-btn" class="secondary-btn">Join Room</button>
+      <p id="code-error" class="field-error" hidden>Enter a valid room code.</p>
+    </section>
   </main>
+
+  <main class="home-screen" id="lobby-screen" hidden>
+    <h1 class="title">Tetris Multiplayer</h1>
+
+    <section class="home-panel">
+      <p class="room-code-label">Room Code</p>
+      <div class="room-code-row">
+        <span id="lobby-room-code" class="room-code-value"></span>
+        <button id="copy-code-btn" class="secondary-btn small-btn">Copy</button>
+      </div>
+      <p id="copy-feedback" class="field-hint" hidden>Copied!</p>
+    </section>
+
+    <section class="home-panel">
+      <h2 class="panel-heading">Players</h2>
+      <ul id="player-list" class="player-list"></ul>
+    </section>
+
+    <button id="start-game-btn" class="primary-btn" disabled>Start Game</button>
+    <p id="start-hint" class="field-hint">Need at least 2 players to start.</p>
+  </main>
+
+  <script src="/home.js" defer></script>
+  <script src="/room.js" defer></script>
 </body>
 </html>
