@@ -75,7 +75,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** The 10×20 grid renders visibly and correctly-proportioned inside the board area from 1.1.
 
 ### 1.3 — Tetromino shapes & spawning
-- [ ] **Dependencies:** 1.2
+- [x] **Dependencies:** 1.2
 - **Files:** `public/game.js`
 - **What it does:** Defines all 7 standard tetromino shapes (I, O, T, S, Z, J, L) and the logic to spawn a random one at the top of the board.
 - **Definition of Done:** Reloading the page repeatedly shows different random pieces correctly shaped and centered at the top of the board.
