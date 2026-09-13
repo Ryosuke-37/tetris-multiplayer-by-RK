@@ -137,10 +137,26 @@ function rotate() {
   }
 }
 
+function lockPiece() {
+  current.cells.forEach((rowArr, r) => {
+    rowArr.forEach((val, c) => {
+      if (val) {
+        const boardRow = current.row + r;
+        const boardCol = current.col + c;
+        if (boardRow >= 0) board[boardRow][boardCol] = current.color;
+      }
+    });
+  });
+
+  current = spawnPiece(randomShapeName());
+  render();
+}
+
 function hardDrop() {
   while (move(1, 0)) {
     /* keep dropping until blocked */
   }
+  lockPiece();
 }
 
 // A plain browser timer is fine here: this is a client-side, single-player
@@ -153,7 +169,9 @@ let dropTimer = null;
 function startGravity() {
   stopGravity();
   dropTimer = setInterval(() => {
-    move(1, 0);
+    if (!move(1, 0)) {
+      lockPiece();
+    }
   }, dropInterval);
 }
 

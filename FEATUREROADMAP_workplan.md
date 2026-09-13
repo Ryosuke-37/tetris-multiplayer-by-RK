@@ -93,7 +93,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** The piece falls automatically at a steady rate without needing any key press.
 
 ### 1.6 — Locking & collision detection
-- [ ] **Dependencies:** 1.5
+- [x] **Dependencies:** 1.5
 - **Files:** `public/game.js`
 - **What it does:** Detects when a falling piece lands on the floor or on top of other pieces, "locks" it permanently into the board grid, and spawns the next piece.
 - **Definition of Done:** Pieces stack correctly on top of each other and on the floor; a new piece spawns automatically after the previous one locks.
