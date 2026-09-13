@@ -37,7 +37,7 @@ Goal: an empty-but-real Cloudflare Worker is live on the internet, proving
 the deploy process works before any game logic exists.
 
 ### 0.1 — Initialize the project structure
-- [ ] **Dependencies:** none
+- [x] **Dependencies:** none
 - **Files:** `package.json`, `.gitignore`, `wrangler.jsonc`, `public/index.html` (placeholder), `src/index.js` (placeholder Worker)
 - **What it does:** Creates the folder layout described in `README.md` — a `public/` folder for the static page, a `src/` folder for the Worker/Durable Object code, and the config files Cloudflare needs.
 - **Definition of Done:** Folder structure exists; `npm install` runs with no errors; a placeholder page ("Tetris Multiplayer — coming soon") exists in `public/index.html`.
