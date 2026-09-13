@@ -257,10 +257,11 @@ Goal: the full multiplayer experience is stable, reasonably good-looking,
 and confirmed working live with real separate browsers/devices.
 
 ### 4.1 — Visual polish pass
-- [ ] **Dependencies:** 3.9
+- [x] **Dependencies:** 3.9
 - **Files:** `public/styles.css`
 - **What it does:** Cleans up spacing, colors, and typography across all screens for a cohesive look. If a Figma file has been provided by this point, this task also reconciles the built UI against it (flagging anything not buildable rather than silently deviating).
 - **Definition of Done:** All four screens (home, lobby, game, results) are visually consistent; any Figma discrepancies are explicitly listed for your review rather than silently resolved.
+- **Confirmed:** still no Figma file provided, so nothing to reconcile against (flagged again here so it isn't missed if one shows up later). Added hover/active states and a focus outline to buttons/inputs, a favicon, a dynamic "Ready to start!" lobby hint, and removed a vestigial Phase-1 CSS rule that was silently overriding button spacing via specificity. Verified visually via screenshots on a 400px-wide viewport.
 
 ### 4.2 — Responsive layout check
 - [ ] **Dependencies:** 4.1

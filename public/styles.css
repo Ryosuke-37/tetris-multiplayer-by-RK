@@ -70,6 +70,7 @@ body {
   font-size: 1rem;
   cursor: pointer;
   margin-top: 8px;
+  transition: background-color 0.15s ease, transform 0.05s ease;
 }
 
 .primary-btn {
@@ -78,9 +79,31 @@ body {
   font-weight: 600;
 }
 
+.primary-btn:hover:not(:disabled) {
+  background: #67e8f9;
+}
+
 .secondary-btn {
   background: #374151;
   color: #f9fafb;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background: #4b5563;
+}
+
+.primary-btn:active:not(:disabled),
+.secondary-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.primary-btn:disabled {
+  cursor: not-allowed;
+}
+
+.home-panel input:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 1px;
 }
 
 .small-btn {
@@ -216,16 +239,6 @@ body {
   padding: 24px 32px;
   border-radius: 12px;
   text-align: center;
-}
-
-.overlay-content button {
-  margin-top: 16px;
-  padding: 8px 20px;
-  background: #22d3ee;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
 }
 
 .opponents-container {

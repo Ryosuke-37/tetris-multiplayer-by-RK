@@ -11,6 +11,7 @@
   const roomCodeEl = document.getElementById('lobby-room-code');
   const playerListEl = document.getElementById('player-list');
   const startBtn = document.getElementById('start-game-btn');
+  const startHint = document.getElementById('start-hint');
   const copyBtn = document.getElementById('copy-code-btn');
   const copyFeedback = document.getElementById('copy-feedback');
 
@@ -35,7 +36,11 @@
       li.textContent = name;
       playerListEl.appendChild(li);
     });
-    startBtn.disabled = names.length < 2;
+    const ready = names.length >= 2;
+    startBtn.disabled = !ready;
+    startHint.textContent = ready
+      ? 'Ready to start!'
+      : 'Need at least 2 players to start.';
   }
 
   startBtn.addEventListener('click', () => {
