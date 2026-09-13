@@ -211,7 +211,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** Every connected browser receives up-to-date state for its own board and all opponents' boards within a fraction of a second of any change.
 
 ### 3.5 — Render opponent boards live
-- [ ] **Dependencies:** 3.4, 1.2 (reuses board-rendering approach from Phase 1)
+- [x] **Dependencies:** 3.4, 1.2 (reuses board-rendering approach from Phase 1)
 - **Files:** `public/room.js`, `public/styles.css`
 - **What it does:** Builds the small, read-only opponent-board thumbnails described in `ProductSpec.md` §4.3, updating live from the broadcasts in 3.4.
 - **Definition of Done:** With two browser tabs open in the same room, moves made in one tab appear, live, on the opponent thumbnail in the other tab (and vice versa).

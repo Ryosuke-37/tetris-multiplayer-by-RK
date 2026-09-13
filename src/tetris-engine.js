@@ -45,6 +45,10 @@ export const SHAPES = {
 };
 const SHAPE_NAMES = Object.keys(SHAPES);
 
+export function getShape(name) {
+  return SHAPES[name];
+}
+
 export const LINE_SCORES = { 1: 100, 2: 300, 3: 500, 4: 800 };
 export const LINES_PER_LEVEL = 10;
 export const BASE_DROP_INTERVAL_MS = 800;

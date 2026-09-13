@@ -10,6 +10,7 @@ import {
   scoreForLines,
   levelForLines,
   dropIntervalForLevel,
+  getShape,
 } from './tetris-engine.js';
 
 // The Alarms API only lets a Durable Object have one pending alarm at a
@@ -294,12 +295,13 @@ export class Room {
   // reaches the browser.
   broadcastState() {
     for (const player of this.players.values()) {
+      const nextShape = getShape(player.nextName);
       const you = {
         grid: mergeBoardWithPiece(player.board, player.current),
         score: player.score,
         level: player.level,
         lines: player.linesCleared,
-        nextName: player.nextName,
+        next: { cells: nextShape.cells, color: nextShape.color },
         status: player.status,
       };
       const opponents = [...this.players.values()]

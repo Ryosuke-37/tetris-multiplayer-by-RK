@@ -227,3 +227,42 @@ body {
   font-size: 1rem;
   cursor: pointer;
 }
+
+.opponents-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.opponent-card {
+  background: #1f2937;
+  border-radius: 8px;
+  padding: 8px;
+  width: 108px;
+  position: relative;
+}
+
+.opponent-card canvas {
+  display: block;
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+.opponent-name {
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.opponent-score {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
