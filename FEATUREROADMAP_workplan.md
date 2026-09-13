@@ -111,7 +111,7 @@ their browser, and it's deployed live. No room codes, no other players yet.
 - **Definition of Done:** The piece visibly falls faster after enough lines are cleared, and the level number on screen increases accordingly.
 
 ### 1.9 — Next-piece preview
-- [ ] **Dependencies:** 1.3
+- [x] **Dependencies:** 1.3
 - **Files:** `public/game.js`
 - **What it does:** Shows the upcoming piece in the "next piece" box from 1.1, so players can plan ahead.
 - **Definition of Done:** The preview box always shows the correct next shape, and it updates the instant the current piece locks.

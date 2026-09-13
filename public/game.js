@@ -46,15 +46,18 @@ const LINES_PER_LEVEL = 10;
 
 const boardCanvas = document.getElementById('board');
 const boardCtx = boardCanvas.getContext('2d');
+const nextCanvas = document.getElementById('next-canvas');
+const nextCtx = nextCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const levelEl = document.getElementById('level');
 const linesEl = document.getElementById('lines');
 
 let board = createEmptyBoard();
-let current = spawnPiece(randomShapeName());
 let score = 0;
 let level = 1;
 let linesCleared = 0;
+let nextName = randomShapeName();
+let current = getNextPieceAndQueue();
 
 function createEmptyBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
@@ -69,6 +72,31 @@ function spawnPiece(name) {
   const cells = shape.cells.map((row) => row.slice());
   const col = Math.floor((COLS - cells[0].length) / 2);
   return { name, cells, color: shape.color, row: 0, col };
+}
+
+function getNextPieceAndQueue() {
+  const name = nextName;
+  nextName = randomShapeName();
+  drawNextPreview();
+  return spawnPiece(name);
+}
+
+function drawNextPreview() {
+  nextCtx.fillStyle = '#111827';
+  nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
+  const shape = SHAPES[nextName];
+  const size = 24;
+  const offsetX = (nextCanvas.width - shape.cells[0].length * size) / 2;
+  const offsetY = (nextCanvas.height - shape.cells.length * size) / 2;
+  shape.cells.forEach((rowArr, r) => {
+    rowArr.forEach((val, c) => {
+      if (!val) return;
+      nextCtx.fillStyle = shape.color;
+      nextCtx.fillRect(offsetX + c * size, offsetY + r * size, size, size);
+      nextCtx.strokeStyle = '#1f2937';
+      nextCtx.strokeRect(offsetX + c * size, offsetY + r * size, size, size);
+    });
+  });
 }
 
 function drawCell(ctx, col, row, color) {
@@ -159,7 +187,7 @@ function lockPiece() {
 
   clearLines();
 
-  current = spawnPiece(randomShapeName());
+  current = getNextPieceAndQueue();
   render();
 }
 
