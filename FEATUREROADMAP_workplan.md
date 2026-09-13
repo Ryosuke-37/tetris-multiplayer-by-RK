@@ -170,10 +170,13 @@ syncing.
 - **Definition of Done:** Opening the same room code in two browser tabs with two different names shows both names, live, in both tabs' player lists — and closing one tab removes that name from the other tab's list within a few seconds.
 
 ### 2.6 — Lobby screen UI
-- [ ] **Dependencies:** 2.5
+- [x] **Dependencies:** 2.5
 - **Files:** `public/room.js`, `public/styles.css`, `public/index.html`
 - **What it does:** Builds the lobby screen from `ProductSpec.md` §4.2: prominent room code with a copy-code button, live player list from 2.5, and a "Start Game" button (enabled once at least 2 players have joined).
 - **Definition of Done:** The lobby visually matches the described layout and the "Start Game" button is disabled/greyed out with fewer than 2 players, enabled with 2+.
+- **Confirmed:** verified locally with a two-browser headless test (real Create Room -> Join Room flow): home screen hides and the lobby shows the correct room code, the player list renders live and the Start Game button correctly goes from disabled (1 player) to enabled (2 players), and the copy-code button copies the right value. Screenshot reviewed for layout.
+
+**🎉 Milestone reached: room creation, joining, live presence, and the lobby screen are all working end-to-end. Per this project's ordering rule, Phase 3 (server-authoritative multiplayer gameplay) may now begin.** Note the "Start Game" button doesn't yet do anything when clicked - wiring it up to actually start a round is Task 3.1+.
 
 ---
 

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <main class="home-screen">
+  <main class="home-screen" id="home-screen">
     <h1 class="title">Tetris Multiplayer</h1>
 
     <section class="home-panel">
@@ -27,6 +27,28 @@
       <p id="code-error" class="field-error" hidden>Enter a valid room code.</p>
     </section>
   </main>
+
+  <main class="home-screen" id="lobby-screen" hidden>
+    <h1 class="title">Tetris Multiplayer</h1>
+
+    <section class="home-panel">
+      <p class="room-code-label">Room Code</p>
+      <div class="room-code-row">
+        <span id="lobby-room-code" class="room-code-value"></span>
+        <button id="copy-code-btn" class="secondary-btn small-btn">Copy</button>
+      </div>
+      <p id="copy-feedback" class="field-hint" hidden>Copied!</p>
+    </section>
+
+    <section class="home-panel">
+      <h2 class="panel-heading">Players</h2>
+      <ul id="player-list" class="player-list"></ul>
+    </section>
+
+    <button id="start-game-btn" class="primary-btn" disabled>Start Game</button>
+    <p class="field-hint">Need at least 2 players to start.</p>
+  </main>
+
   <script src="/home.js" defer></script>
   <script src="/room.js" defer></script>
 </body>

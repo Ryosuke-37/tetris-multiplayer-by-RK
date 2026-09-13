@@ -3,6 +3,41 @@
   if (!match) return; // We're on the home screen, not a room page - nothing to do yet.
 
   const roomCode = match[1];
+
+  document.getElementById('home-screen').hidden = true;
+  const lobbyScreen = document.getElementById('lobby-screen');
+  lobbyScreen.hidden = false;
+
+  const roomCodeEl = document.getElementById('lobby-room-code');
+  const playerListEl = document.getElementById('player-list');
+  const startBtn = document.getElementById('start-game-btn');
+  const copyBtn = document.getElementById('copy-code-btn');
+  const copyFeedback = document.getElementById('copy-feedback');
+
+  roomCodeEl.textContent = roomCode;
+
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(roomCode);
+      copyFeedback.hidden = false;
+      setTimeout(() => {
+        copyFeedback.hidden = true;
+      }, 2000);
+    } catch (err) {
+      console.error('Could not copy room code', err);
+    }
+  });
+
+  function renderPlayers(names) {
+    playerListEl.innerHTML = '';
+    names.forEach((name) => {
+      const li = document.createElement('li');
+      li.textContent = name;
+      playerListEl.appendChild(li);
+    });
+    startBtn.disabled = names.length < 2;
+  }
+
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const socket = new WebSocket(`${protocol}//${window.location.host}/room/${roomCode}`);
 
@@ -29,10 +64,7 @@
     }
 
     if (data.type === 'players') {
-      console.log('Players in room:', data.payload.names);
-      // Exposed for now so the connection/broadcast logic can be tested
-      // independently; Task 2.6 replaces this with the real lobby UI.
-      window.__roomPlayers = data.payload.names;
+      renderPlayers(data.payload.names);
     }
   });
 })();

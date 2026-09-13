@@ -83,6 +83,67 @@ body {
   color: #f9fafb;
 }
 
+.small-btn {
+  width: auto;
+  margin-top: 0;
+  padding: 8px 14px;
+}
+
+.panel-heading {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.room-code-label {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.room-code-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.room-code-value {
+  font-family: ui-monospace, monospace;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+}
+
+.field-hint {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+.player-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.player-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #374151;
+}
+
+.player-list li:last-child {
+  border-bottom: none;
+}
+
+#start-game-btn:disabled {
+  background: #374151;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
 .game-layout {
   display: flex;
   gap: 16px;
