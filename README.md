@@ -43,11 +43,13 @@ pushed to the `claude/multiplayer-tetris-cloudflare-jrjg0a` branch — no
 manual deploy step required. (Once the project is finished, the production
 branch can be switched to `main`.)
 
-All planned features are built and tested (single-player prototype through
-full server-authoritative multiplayer, polish, and error handling). See
-`FEATUREROADMAP_workplan.md` for the full task-by-task build plan and
-progress — the one remaining item is a final live smoke test from two
-genuinely separate devices.
+**🎉 Project complete.** Every task in `FEATUREROADMAP_workplan.md` is
+checked off, including a live smoke test played between two separate real
+devices: room creation and joining, live opponent board sync, game over,
+the results screen, and a rematch via Play Again all confirmed working on
+the public internet. See that file for the full build history, or the
+"Later / stretch ideas" list at its end for optional features (mobile
+touch controls, sound, etc.) that were intentionally left out of scope.
 
 ## Running it locally (once code exists)
 

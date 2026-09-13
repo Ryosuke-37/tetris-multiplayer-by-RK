@@ -278,10 +278,31 @@ and confirmed working live with real separate browsers/devices.
 - **Confirmed:** also added a 4th check beyond the three named - joining a room whose round already started - since Durable Objects are created lazily just by looking them up, so without this a mistyped code, a duplicate name, or a late join would otherwise silently "succeed" into a broken state rather than surface as an error. Verified with a headless test covering all four: normal create/join still works; a case-insensitive duplicate name is rejected; joining after Start Game is rejected; a room code nobody ever created shows "Room not found"; a 7th player is rejected once a room hits the 6-player cap. Also reran the full rematch-flow regression test to confirm the join-path changes didn't affect anything downstream.
 
 ### 4.4 — Final live multiplayer smoke test & deploy
-- [ ] **Dependencies:** 4.1, 4.2, 4.3
+- [x] **Dependencies:** 4.1, 4.2, 4.3
 - **Files:** none (deployment/verification step), `README.md` (final live URL)
 - **What it does:** Deploys the finished multiplayer game and plays a full round live, from at least two genuinely separate browsers (e.g. your laptop and your phone, not two tabs on one machine), start to finish.
 - **Definition of Done:** A full multiplayer round — create room, join from a second real device, play to game over, see results, rematch — works correctly on the public internet, on the Workers Free plan.
+- **Confirmed:** verified live at https://tetris-multiplayer-by-rk.rkinoshita.workers.dev by the project owner, playing between two separate real PCs with keyboard controls: room creation and joining, live opponent board sync, game over, the results screen with both scores, and Play Again into a fresh rematch all worked correctly. Touch controls remain an explicit stretch item, not required for this check.
+
+---
+
+## 🎉 Project complete
+
+All 4 phases and every task above are checked off. The game is live on
+the public internet, on Cloudflare's Workers Free plan, running the full
+technical stack this project set out to build: a Durable Object per room
+(`env.ROOM.getByName(roomCode)`, SQLite-backed), native WebSockets accepted
+via `ctx.acceptWebSocket()` for hibernation-safety, an Alarms-driven tick
+loop with zero `setInterval`/`setTimeout` on the server, and JSON
+`{type, payload}` messages end to end - built up from a deployed
+single-player prototype (Phase 1) into full server-authoritative
+multiplayer (Phase 3), then polished and hardened (Phase 4).
+
+**Live URL:** https://tetris-multiplayer-by-rk.rkinoshita.workers.dev
+
+Anything from here is new scope, not a gap in what was asked for - see the
+"Later / stretch ideas" list below if you want to pick one up next, or just
+go play it with friends.
 
 ---
 
