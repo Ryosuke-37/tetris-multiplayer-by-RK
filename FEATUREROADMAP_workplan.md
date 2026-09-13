@@ -158,7 +158,7 @@ syncing.
 - **Definition of Done:** Two different room codes reliably route to two different, isolated Durable Object instances (confirmed by, e.g., temporarily logging the room code inside the Durable Object).
 
 ### 2.4 — WebSocket connection accepted by the Durable Object
-- [ ] **Dependencies:** 2.3
+- [x] **Dependencies:** 2.3
 - **Files:** `src/room.js`, `public/room.js` (new — client-side connection code)
 - **What it does:** The browser opens a WebSocket to its room's Durable Object; the Durable Object accepts it using `ctx.acceptWebSocket(server)` (the hibernation-safe accept method this project requires, instead of the more common `server.accept()`).
 - **Definition of Done:** Opening the lobby page establishes a visibly open WebSocket connection (checkable in the browser's developer tools) that stays connected.

@@ -6,18 +6,26 @@ export class Room {
   }
 
   async fetch(request) {
-    this.requestCount += 1;
-
     const url = new URL(request.url);
     const match = url.pathname.match(/^\/room\/([A-Za-z0-9]+)/);
     const roomCode = match ? match[1] : 'unknown';
-    console.log(`Room ${roomCode} received request #${this.requestCount}`);
 
-    const upgradeHeader = request.headers.get('Upgrade');
-    if (upgradeHeader === 'websocket') {
-      // WebSocket handling arrives in Task 2.4.
-      return new Response('WebSocket upgrade not yet implemented', { status: 501 });
+    if (request.headers.get('Upgrade') === 'websocket') {
+      console.log(`Room ${roomCode}: accepting WebSocket connection`);
+      const pair = new WebSocketPair();
+      const [client, server] = Object.values(pair);
+
+      // ctx.acceptWebSocket (not server.accept()) is required so this
+      // connection survives the Durable Object hibernating between
+      // messages - the runtime can wake the object back up and still
+      // deliver webSocketMessage/webSocketClose events to it.
+      this.ctx.acceptWebSocket(server);
+
+      return new Response(null, { status: 101, webSocket: client });
     }
+
+    this.requestCount += 1;
+    console.log(`Room ${roomCode} received request #${this.requestCount}`);
 
     // Plain page load: serve the SPA shell through this room's own Durable
     // Object instance. The per-instance requestCount below (exposed via the
@@ -31,5 +39,13 @@ export class Room {
       status: assetResponse.status,
       headers,
     });
+  }
+
+  async webSocketMessage(ws, message) {
+    // Player identity and message handling arrive in Tasks 2.5+.
+  }
+
+  async webSocketClose(ws, code, reason, wasClean) {
+    ws.close(code, reason);
   }
 }
