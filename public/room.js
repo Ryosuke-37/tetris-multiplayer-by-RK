@@ -143,6 +143,7 @@
       <p class="opponent-name"></p>
       <canvas width="100" height="200"></canvas>
       <p class="opponent-score"></p>
+      <div class="opponent-status-badge" hidden></div>
     `;
     container.appendChild(card);
 
@@ -151,11 +152,17 @@
       nameEl: card.querySelector('.opponent-name'),
       canvas: card.querySelector('canvas'),
       scoreEl: card.querySelector('.opponent-score'),
+      badgeEl: card.querySelector('.opponent-status-badge'),
     };
     entry.ctx = entry.canvas.getContext('2d');
     opponentEls.set(playerId, entry);
     return entry;
   }
+
+  const OPPONENT_STATUS_LABELS = {
+    disconnected: 'Disconnected',
+    'topped-out': 'Game Over',
+  };
 
   function renderOpponents(opponents) {
     const seen = new Set();
@@ -165,6 +172,10 @@
       entry.nameEl.textContent = opp.name;
       entry.scoreEl.textContent = `Score: ${opp.score}`;
       drawGrid(entry.ctx, opp.grid, OPP_CELL);
+
+      const label = OPPONENT_STATUS_LABELS[opp.status];
+      entry.badgeEl.textContent = label || '';
+      entry.badgeEl.hidden = !label;
     });
 
     // Clean up a card for a player no longer in the list (shouldn't

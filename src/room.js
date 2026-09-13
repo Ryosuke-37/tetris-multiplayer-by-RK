@@ -201,11 +201,29 @@ export class Room {
   }
 
   async webSocketClose(ws, code, reason, wasClean) {
-    // Broadcast the updated roster (with this socket excluded) before
-    // actually closing it - broadcasting after close() would try to send()
-    // to this same socket and throw, silently killing the whole broadcast
-    // so nobody's list would update.
-    this.broadcastPlayers(ws);
+    if (this.gameState === 'lobby') {
+      // Broadcast the updated roster (with this socket excluded) before
+      // actually closing it - broadcasting after close() would try to
+      // send() to this same socket and throw, silently killing the whole
+      // broadcast so nobody's list would update.
+      this.broadcastPlayers(ws);
+      ws.close(code, reason);
+      return;
+    }
+
+    // Mid-round: the player isn't removed, just marked disconnected, so
+    // their last board state stays visible to everyone else and the round
+    // continues uninterrupted for whoever's left. Because broadcastState()
+    // only sends to a player whose own status is still 'playing', marking
+    // this one 'disconnected' first means it naturally never tries to
+    // send() to this now-closing socket.
+    const attachment = ws.deserializeAttachment();
+    const player = attachment && attachment.playerId ? this.players.get(attachment.playerId) : null;
+    if (player && player.status === 'playing') {
+      player.status = 'disconnected';
+      this.broadcastState();
+      await this.persistState();
+    }
     ws.close(code, reason);
   }
 
@@ -366,7 +384,11 @@ export class Room {
           status: other.status,
         }));
 
-      if (!player.socket) continue; // reloaded from storage but not yet re-linked to a live socket
+      // No live connection to send to: either reloaded from storage and
+      // not yet re-linked to a live socket, or this player has
+      // disconnected - either way there's nobody there to receive it, and
+      // retrying every tick forever would be pure waste.
+      if (!player.socket || player.status === 'disconnected') continue;
 
       const message = JSON.stringify({ type: 'state', payload: { you, opponents } });
       try {

@@ -223,7 +223,7 @@ broadcasting everyone's state live, so players actually see each other play.
 - **Definition of Done:** Forcing the Durable Object to restart mid-game (e.g. via a brief deploy or an intentional test hook) resumes the game from the last saved state rather than resetting it.
 
 ### 3.7 — Disconnect & reconnect handling
-- [ ] **Dependencies:** 3.4
+- [x] **Dependencies:** 3.4
 - **Files:** `src/room.js`, `public/room.js`
 - **What it does:** Detects when a player's WebSocket closes unexpectedly, marks their board thumbnail "Disconnected" for everyone else (per `ProductSpec.md` §4.4) without stopping the game for remaining players, and cleans up their connection.
 - **Definition of Done:** Closing one browser tab mid-game makes that player's thumbnail show "Disconnected" in the remaining tab(s) within a few seconds, while the other player(s) keep playing uninterrupted.
