@@ -38,6 +38,10 @@
     startBtn.disabled = names.length < 2;
   }
 
+  startBtn.addEventListener('click', () => {
+    socket.send(JSON.stringify({ type: 'start' }));
+  });
+
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const socket = new WebSocket(`${protocol}//${window.location.host}/room/${roomCode}`);
 
@@ -65,6 +69,19 @@
 
     if (data.type === 'players') {
       renderPlayers(data.payload.names);
+    }
+
+    if (data.type === 'start') {
+      console.log('Game started');
+      window.__gameStarted = true;
+      // Task 3.4/3.5 build the real game screen and opponent thumbnails;
+      // for now the lobby just stops updating.
+    }
+
+    if (data.type === 'state') {
+      // Exposed for now so board initialization can be tested
+      // independently; Task 3.4/3.5 render this for real.
+      window.__gameState = data.payload;
     }
   });
 })();

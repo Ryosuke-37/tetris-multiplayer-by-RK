@@ -187,7 +187,7 @@ player's board, ticking their pieces down via Alarms (not timers), and
 broadcasting everyone's state live, so players actually see each other play.
 
 ### 3.1 — Move game state into the Durable Object
-- [ ] **Dependencies:** 2.6, 1.11 (reuses the Phase 1 game-rule logic, e.g. collision/line-clear code, moved server-side)
+- [x] **Dependencies:** 2.6, 1.11 (reuses the Phase 1 game-rule logic, e.g. collision/line-clear code, moved server-side)
 - **Files:** `src/room.js`, `src/tetris-engine.js` (new — shared game-rule logic, adapted from `public/game.js`)
 - **What it does:** Gives the Durable Object its own copy of each connected player's board, current piece, next piece, and score — reusing the same rules built in Phase 1, but now running on the server instead of trusting the browser.
 - **Definition of Done:** Starting a game creates a correctly-initialized board and first piece for every connected player, tracked inside the Durable Object.

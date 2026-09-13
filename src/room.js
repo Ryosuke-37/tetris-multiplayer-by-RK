@@ -1,8 +1,17 @@
+import {
+  createEmptyBoard,
+  randomShapeName,
+  spawnPiece,
+  mergeBoardWithPiece,
+} from './tetris-engine.js';
+
 export class Room {
   constructor(ctx, env) {
     this.ctx = ctx;
     this.env = env;
     this.requestCount = 0;
+    this.gameState = 'lobby'; // 'lobby' | 'playing' | 'results'
+    this.players = new Map(); // playerId -> player state, populated by startGame()
   }
 
   async fetch(request) {
@@ -56,6 +65,12 @@ export class Room {
       // serializeAttachment() rather than in a plain instance field.
       ws.serializeAttachment({ name: data.payload.name });
       this.broadcastPlayers();
+      return;
+    }
+
+    if (data.type === 'start') {
+      this.startGame();
+      return;
     }
   }
 
@@ -82,6 +97,84 @@ export class Room {
       } catch (err) {
         // Socket is already closing/closed - ignore, it'll drop out of
         // ctx.getWebSockets() on the next call.
+      }
+    }
+  }
+
+  // Task 3.1: give every currently-connected, named player their own
+  // initialized board and first piece, tracked here in the Durable Object
+  // (not trusted from the browser). Tick loop (3.2), input handling (3.3),
+  // and state broadcast (3.4) build on top of this.
+  startGame() {
+    if (this.gameState === 'playing') return;
+
+    this.gameState = 'playing';
+    this.players = new Map();
+
+    for (const socket of this.ctx.getWebSockets()) {
+      const attachment = socket.deserializeAttachment();
+      if (!attachment || !attachment.name) continue;
+
+      const playerId = crypto.randomUUID();
+      socket.serializeAttachment({ name: attachment.name, playerId });
+
+      this.players.set(playerId, {
+        playerId,
+        name: attachment.name,
+        socket,
+        board: createEmptyBoard(),
+        current: spawnPiece(randomShapeName()),
+        nextName: randomShapeName(),
+        score: 0,
+        level: 1,
+        linesCleared: 0,
+        dropIntervalMs: 800,
+        msUntilDrop: 800,
+        status: 'playing',
+      });
+    }
+
+    const startMessage = JSON.stringify({ type: 'start' });
+    for (const player of this.players.values()) {
+      try {
+        player.socket.send(startMessage);
+      } catch (err) {
+        // Ignore - a player whose send fails here will show up as
+        // disconnected once webSocketClose fires.
+      }
+    }
+
+    this.broadcastState();
+  }
+
+  // Sends each player their own full board (with their current piece
+  // overlaid) plus everyone else's. Full opponent detail arrives in 3.4/3.5
+  // - for now this proves per-player state is correctly initialized and
+  // reaches the browser.
+  broadcastState() {
+    for (const player of this.players.values()) {
+      const you = {
+        grid: mergeBoardWithPiece(player.board, player.current),
+        score: player.score,
+        level: player.level,
+        lines: player.linesCleared,
+        nextName: player.nextName,
+        status: player.status,
+      };
+      const opponents = [...this.players.values()]
+        .filter((other) => other.playerId !== player.playerId)
+        .map((other) => ({
+          playerId: other.playerId,
+          name: other.name,
+          score: other.score,
+          status: other.status,
+        }));
+
+      const message = JSON.stringify({ type: 'state', payload: { you, opponents } });
+      try {
+        player.socket.send(message);
+      } catch (err) {
+        // Ignore - handled by webSocketClose when the runtime notices.
       }
     }
   }
